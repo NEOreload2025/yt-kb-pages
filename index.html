@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15 分鐘學完 CLAUDE.md：從入門到精通</title>
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  :root{
+    --bg:#faf7f2;
+    --bg-card:#ffffff;
+    --text:#2a2520;
+    --text-muted:#6b6259;
+    --primary:#c96442;
+    --primary-light:#f5e4dc;
+    --primary-dark:#a44e30;
+    --accent:#6b8e7f;
+    --accent-light:#e3ebe7;
+    --warning:#c89a4e;
+    --warning-light:#f5ead0;
+    --border:#ebe3d8;
+    --code-bg:#f4ede3;
+    --shadow-sm:0 2px 8px rgba(0,0,0,0.04);
+    --shadow-md:0 6px 24px rgba(0,0,0,0.06);
+  }
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei","Helvetica Neue",sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  code,.mono{
+    font-family:"SF Mono",Menlo,Monaco,Consolas,"Courier New",monospace;
+    font-size:0.85em;
+    background:var(--code-bg);
+    color:#8b6f47;
+    padding:0.15em 0.4em;
+    border-radius:4px;
+  }
+  .container{
+    max-width:920px;
+    margin:0 auto;
+    padding:2rem 1.25rem 4rem;
+  }
+
+  /* HERO */
+  .hero{
+    text-align:center;
+    padding:2.5rem 0 2.5rem;
+    margin-bottom:3rem;
+    position:relative;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    bottom:0;left:50%;
+    transform:translateX(-50%);
+    width:60px;height:1px;
+    background:var(--border);
+  }
+  .hero-tag{
+    display:inline-block;
+    padding:0.35rem 0.95rem;
+    background:var(--primary-light);
+    color:var(--primary-dark);
+    border-radius:999px;
+    font-size:0.82rem;
+    font-weight:600;
+    margin-bottom:1.4rem;
+    letter-spacing:0.08em;
+  }
+  .hero h1{
+    font-size:clamp(1.85rem,5.2vw,2.9rem);
+    line-height:1.25;
+    font-weight:800;
+    margin-bottom:1.25rem;
+    letter-spacing:-0.02em;
+  }
+  .hero .one-liner{
+    font-size:clamp(1.02rem,2.4vw,1.18rem);
+    color:var(--text-muted);
+    max-width:660px;
+    margin:0 auto;
+    line-height:1.7;
+  }
+  .hero .one-liner strong{color:var(--primary-dark);font-weight:700;}
+
+  /* SECTIONS */
+  section{margin-bottom:4rem;}
+  .section-label{
+    display:flex;align-items:center;gap:0.7rem;
+    margin-bottom:1.1rem;
+    font-size:0.78rem;
+    font-weight:700;
+    color:var(--primary);
+    letter-spacing:0.18em;
+  }
+  .section-label::before{
+    content:"";width:22px;height:2px;background:var(--primary);border-radius:2px;
+  }
+  h2{
+    font-size:clamp(1.45rem,4vw,2rem);
+    font-weight:800;
+    margin-bottom:0.85rem;
+    line-height:1.3;
+    letter-spacing:-0.015em;
+  }
+  .section-intro{
+    color:var(--text-muted);
+    font-size:1.02rem;
+    margin-bottom:1.75rem;
+    max-width:680px;
+  }
+  .section-intro strong{color:var(--text);font-weight:600;}
+
+  /* 3 LEVEL CARDS */
+  .level-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:1rem;
+    margin-bottom:1.4rem;
+  }
+  .level-card{
+    background:var(--bg-card);
+    padding:1.5rem 1.4rem;
+    border-radius:12px;
+    border:1px solid var(--border);
+    transition:transform 0.2s,box-shadow 0.2s;
+  }
+  .level-card:hover{
+    transform:translateY(-3px);
+    box-shadow:var(--shadow-md);
+  }
+  .level-num{
+    display:inline-block;
+    padding:0.22rem 0.65rem;
+    background:var(--primary-light);
+    color:var(--primary-dark);
+    border-radius:6px;
+    font-size:0.72rem;
+    font-weight:700;
+    letter-spacing:0.05em;
+    margin-bottom:0.7rem;
+  }
+  .level-card h3{font-size:1.05rem;margin-bottom:0.45rem;font-weight:700;}
+  .level-card .path{
+    font-family:"SF Mono",Menlo,Monaco,Consolas,monospace;
+    font-size:0.84rem;
+    background:var(--code-bg);
+    color:#8b6f47;
+    padding:0.22rem 0.55rem;
+    border-radius:4px;
+    display:inline-block;
+    margin-bottom:0.7rem;
+  }
+  .level-card p{font-size:0.94rem;color:var(--text-muted);line-height:1.65;}
+
+  .stacking-note{
+    background:var(--accent-light);
+    border-left:3px solid var(--accent);
+    padding:0.9rem 1.2rem;
+    border-radius:0 8px 8px 0;
+    font-size:0.94rem;
+    color:#3d5f4b;
+  }
+  .stacking-note strong{color:#2d4a3a;}
+
+  /* QA LIST */
+  .qa-list{display:grid;gap:0.8rem;margin-top:1.4rem;}
+  .qa-item{
+    background:var(--bg-card);
+    padding:1.2rem 1.35rem;
+    border-radius:10px;
+    border:1px solid var(--border);
+    display:flex;gap:1rem;align-items:flex-start;
+    transition:border-color 0.2s;
+  }
+  .qa-item:hover{border-color:var(--primary);}
+  .qa-num{
+    flex-shrink:0;
+    width:34px;height:34px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:0.92rem;
+    color:white;
+  }
+  .q-subtract .qa-num{background:var(--warning);}
+  .q-add .qa-num{background:var(--accent);}
+  .qa-content h4{font-size:1rem;font-weight:600;margin-bottom:0.32rem;line-height:1.45;}
+  .qa-content p{font-size:0.92rem;color:var(--text-muted);line-height:1.6;}
+  .qa-content .example{
+    display:block;
+    margin-top:0.4rem;
+    font-size:0.88rem;
+    color:var(--text);
+    background:#faf3eb;
+    padding:0.45rem 0.7rem;
+    border-radius:6px;
+    border-left:2px solid var(--primary-light);
+  }
+  .qa-content .example::before{
+    content:"例：";
+    color:var(--primary-dark);
+    font-weight:700;
+    margin-right:0.2em;
+  }
+
+  /* ROUTING */
+  .routing-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:1rem;
+    margin-top:1.4rem;
+  }
+  .routing-card{
+    background:var(--bg-card);
+    padding:1.4rem 1.3rem;
+    border-radius:10px;
+    border:1px solid var(--border);
+    transition:transform 0.2s;
+  }
+  .routing-card:hover{transform:translateY(-3px);}
+  .routing-tag{
+    display:inline-block;
+    font-family:"SF Mono",Menlo,Monaco,Consolas,monospace;
+    font-size:0.78rem;
+    padding:0.3rem 0.6rem;
+    border-radius:5px;
+    margin-bottom:0.7rem;
+    background:#2a2520;color:#f4ede3;
+    font-weight:600;
+  }
+  .routing-card h4{font-size:1.02rem;margin-bottom:0.45rem;font-weight:700;}
+  .routing-card p{font-size:0.93rem;color:var(--text-muted);line-height:1.65;}
+  .routing-card p strong{color:var(--text);font-weight:600;}
+
+  /* CYCLE */
+  .cycle{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:1rem;
+    margin-top:1.4rem;
+  }
+  .cycle-step{
+    background:var(--bg-card);
+    padding:1.4rem 1.3rem;
+    border-radius:10px;
+    border:1px solid var(--border);
+    position:relative;
+  }
+  .cycle-symbol{
+    display:inline-flex;
+    align-items:center;justify-content:center;
+    width:36px;height:36px;
+    border-radius:50%;
+    font-size:1.1rem;font-weight:800;
+    margin-bottom:0.75rem;
+  }
+  .cycle-step.plus .cycle-symbol{background:var(--primary-light);color:var(--primary-dark);}
+  .cycle-step.minus .cycle-symbol{background:var(--warning-light);color:#8a6428;}
+  .cycle-step h4{font-size:1rem;font-weight:700;margin-bottom:0.4rem;}
+  .cycle-step p{font-size:0.9rem;color:var(--text-muted);line-height:1.6;}
+  .cycle-step p strong{color:var(--text);font-weight:600;}
+
+  /* CLOSING */
+  .closing{
+    background:linear-gradient(135deg,#f5e4dc 0%,#e3ebe7 100%);
+    padding:2.75rem 2.25rem;
+    border-radius:18px;
+    text-align:center;
+    margin-top:1.5rem;
+    box-shadow:var(--shadow-sm);
+  }
+  .closing h2{margin-bottom:1rem;}
+  .closing p{
+    color:var(--text);
+    font-size:1.05rem;
+    max-width:560px;
+    margin:0 auto;
+    line-height:1.75;
+  }
+  .closing p strong{color:var(--primary-dark);font-weight:700;}
+
+  /* FOOTER */
+  footer{
+    margin-top:4rem;
+    padding-top:2rem;
+    border-top:1px solid var(--border);
+    text-align:center;
+    font-size:0.85rem;
+    color:var(--text-muted);
+    line-height:1.7;
+  }
+  footer a{
+    color:var(--primary);
+    text-decoration:none;
+    border-bottom:1px dashed var(--primary);
+    padding-bottom:1px;
+    transition:border-bottom-style 0.2s;
+  }
+  footer a:hover{border-bottom-style:solid;}
+
+  /* MOBILE */
+  @media (max-width:600px){
+    .container{padding:1.25rem 1rem 3rem;}
+    .hero{padding:1.5rem 0 2rem;margin-bottom:2.5rem;}
+    section{margin-bottom:3rem;}
+    .qa-item{padding:1.05rem 1.15rem;gap:0.8rem;}
+    .qa-num{width:30px;height:30px;font-size:0.85rem;}
+    .closing{padding:2rem 1.4rem;border-radius:14px;}
+    .level-card,.routing-card,.cycle-step{padding:1.25rem 1.2rem;}
+  }
+
+  /* PRINT FRIENDLY */
+  @media print{
+    body{background:white;color:black;}
+    .level-card,.qa-item,.routing-card,.cycle-step,.closing{
+      box-shadow:none;border:1px solid #ddd;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="hero">
+    <span class="hero-tag">AI 工作流 · 入門指南</span>
+    <h1>15 分鐘學完 CLAUDE.md<br>從入門到精通</h1>
+    <p class="one-liner">CLAUDE.md 是 Claude Code 每次對話前<strong>強制讀取</strong>的指令檔。<br>寫好它，是用 AI 投資報酬率<strong>最高</strong>的一件事。</p>
+  </header>
+
+  <!-- 01 基礎觀念 -->
+  <section>
+    <div class="section-label">01 · 基礎觀念</div>
+    <h2>它是什麼？</h2>
+    <p class="section-intro">放在專案裡的指令檔，每次開對話時自動注入 context。它是給 AI 的<strong>「不可違背的最高指導原則」</strong>。寫得好，就不用每次開新對話重複解釋專案的架構與規矩。</p>
+  </section>
+
+  <!-- 02 三個層級 -->
+  <section>
+    <div class="section-label">02 · 架構</div>
+    <h2>三個層級，規則會疊加</h2>
+    <p class="section-intro">越<strong>接近工作檔案</strong>的規則越精準。針對不同範圍，放對應的層級。</p>
+
+    <div class="level-grid">
+      <div class="level-card">
+        <span class="level-num">LEVEL 1</span>
+        <h3>User Level</h3>
+        <span class="path">~/.claude/</span>
+        <p>所有 session 都通用。放個人長期偏好，例如「只用繁體中文輸出」。</p>
+      </div>
+      <div class="level-card">
+        <span class="level-num">LEVEL 2</span>
+        <h3>Project Level</h3>
+        <span class="path">./CLAUDE.md</span>
+        <p>專案共通規則，放在專案根目錄，跟著程式碼一起上 git。</p>
+      </div>
+      <div class="level-card">
+        <span class="level-num">LEVEL 3</span>
+        <h3>Nested Level</h3>
+        <span class="path">frontend/CLAUDE.md</span>
+        <p>特定資料夾專屬規則，例如 frontend、backend 分別管理。</p>
+      </div>
+    </div>
+
+    <div class="stacking-note">
+      <strong>額外技巧：</strong>用 <code>CLAUDE.local.md</code> 放個人癖好，<strong>不上傳</strong>到 git。
+    </div>
+  </section>
+
+  <!-- 03 /init -->
+  <section>
+    <div class="section-label">03 · 建立</div>
+    <h2>用 /init 起步，但別照單全收</h2>
+    <p class="section-intro">/init 會自動產生一份「太完整」的模板——但很多資訊，其實 Claude 自己就能靠 <strong>Explore subagent</strong> 找到。照單全收會浪費 token、塞爆 Instruction Budget，<strong>淹沒真正重要的規則</strong>。</p>
+  </section>
+
+  <!-- 04 減法三問 -->
+  <section>
+    <div class="section-label">04 · 過濾</div>
+    <h2>減法三問：留下真正重要的</h2>
+    <p class="section-intro">面對 /init 產出的長清單，逐一用這三題篩選。</p>
+
+    <div class="qa-list">
+      <div class="qa-item q-subtract">
+        <div class="qa-num">1</div>
+        <div class="qa-content">
+          <h4>Claude 的 Explore subagent 能不能自己發現？</h4>
+          <p>能就別寫，避免浪費 context。</p>
+        </div>
+      </div>
+      <div class="qa-item q-subtract">
+        <div class="qa-num">2</div>
+        <div class="qa-content">
+          <h4>這條資訊是不是大部分工作都用得到？</h4>
+          <p>只有特定資料夾才用得到的，放 Nested Level 就好。</p>
+        </div>
+      </div>
+      <div class="qa-item q-subtract">
+        <div class="qa-num">3</div>
+        <div class="qa-content">
+          <h4>幾個月後還會成立嗎？</h4>
+          <p>會過期的內容，現在就別留。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 加法五問 -->
+  <section>
+    <div class="section-label">05 · 加值</div>
+    <h2>加法五問：找出該寫進去的隱性知識</h2>
+    <p class="section-intro">做完減法，再回頭檢查——有沒有這些<strong>「只有你知道」</strong>的關鍵知識？</p>
+
+    <div class="qa-list">
+      <div class="qa-item q-add">
+        <div class="qa-num">1</div>
+        <div class="qa-content">
+          <h4>有沒有絕對不能搞錯的規定？</h4>
+          <span class="example">價格必須含稅。</span>
+        </div>
+      </div>
+      <div class="qa-item q-add">
+        <div class="qa-num">2</div>
+        <div class="qa-content">
+          <h4>有沒有固定處理方式？</h4>
+          <span class="example">改價格一定從試算表開始，不能直接改前端。</span>
+        </div>
+      </div>
+      <div class="qa-item q-add">
+        <div class="qa-num">3</div>
+        <div class="qa-content">
+          <h4>改完這裡，還有哪裡要跟著改？</h4>
+          <p>明確標註<strong>連動關係</strong>，避免改一漏十。</p>
+        </div>
+      </div>
+      <div class="qa-item q-add">
+        <div class="qa-num">4</div>
+        <div class="qa-content">
+          <h4>做到什麼程度才算完成？</h4>
+          <p>寫下<strong>完成前的檢查清單</strong>。</p>
+        </div>
+      </div>
+      <div class="qa-item q-add">
+        <div class="qa-num">5</div>
+        <div class="qa-content">
+          <h4>遇到不懂的事，去哪裡找答案？</h4>
+          <p>明確指向文件、設計稿、Schema 的<strong>存放位置</strong>。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 維護 -->
+  <section>
+    <div class="section-label">06 · 維護</div>
+    <h2>維護 = 新增 + 修剪</h2>
+    <p class="section-intro">CLAUDE.md 不是寫完就好，要<strong>持續跟著專案演化</strong>。</p>
+
+    <div class="cycle">
+      <div class="cycle-step plus">
+        <span class="cycle-symbol">＋</span>
+        <h4>新增：/insights</h4>
+        <p>用 /insights 分析對話歷史，找出<strong>反覆發生</strong>的問題，只加真正需要的規則。</p>
+      </div>
+      <div class="cycle-step minus">
+        <span class="cycle-symbol">－</span>
+        <h4>修剪：模型已變強</h4>
+        <p>模型變強後不再需要的規則就刪掉。官方為 Fable 5 / Opus 5 刪掉 80% 規則，<strong>能力反而沒退步</strong>。</p>
+      </div>
+      <div class="cycle-step minus">
+        <span class="cycle-symbol">－</span>
+        <h4>修剪：過時規則</h4>
+        <p>刪掉不再符合現況的規則。對照<strong>最新官方 Prompting Guide</strong> 判斷哪些已過時。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 內容分流 -->
+  <section>
+    <div class="section-label">07 · 分流</div>
+    <h2>內容分流：別全塞 CLAUDE.md</h2>
+    <p class="section-intro">不同性質的內容，應該放在不同的地方各司其職。</p>
+
+    <div class="routing-grid">
+      <div class="routing-card">
+        <span class="routing-tag">Skill</span>
+        <h4>長流程任務</h4>
+        <p>例如發布版本前的十幾項檢查。放在 Skill，<strong>需要時再呼叫</strong>，不要一直佔用 context。</p>
+      </div>
+      <div class="routing-card">
+        <span class="routing-tag">Hook</span>
+        <h4>絕對不能犯的死罪</h4>
+        <p>例如 API key 不能進 git。用 <strong>Hook 程式強制攔截</strong>，不能只靠文字提醒。</p>
+      </div>
+      <div class="routing-card">
+        <span class="routing-tag">AGENTS.md</span>
+        <h4>Codex 對應檔</h4>
+        <p>CLAUDE.md ↔ AGENTS.md 之間維持 <strong>single source of truth</strong>，一份 reference 另一份。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 收尾 -->
+  <div class="closing">
+    <h2>寫一次，受用每一次</h2>
+    <p>CLAUDE.md 是你跟 AI 一起工作的<strong>契約</strong>。寫得精準、持續維護，它就會在每一個新對話裡替你把關——讓 AI 從「聰明但陌生」變成「熟悉你專案的老同事」。</p>
+  </div>
+
+  <footer>
+    內容整理自 YouTube 影片（<a href="https://youtu.be/wj7mHCviMvs" target="_blank" rel="noopener">youtu.be/wj7mHCviMvs</a>）<br>
+    整理日期：2026-08-23
+  </footer>
+
+</div>
+</body>
+</html>
