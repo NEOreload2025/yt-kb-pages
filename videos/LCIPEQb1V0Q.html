@@ -6,515 +6,22 @@
 <title>Obsidian裝了卻不會用？我這樣用它做完一支影片｜實戰分享 — YT-KB</title>
 <meta name="description" content="Obsidian 的真正價值是第二大腦：統一收進外部蒐集與自己想法，讓 AI 隨時分析、你能隨時引用。完整影片製作流程 + origin 欄位 + 讀書筆記庫。">
 <script>
-  // Anti-FOUC: 在 CSS 載入前先設定主題，避免閃爍
   (function() {
+    var themeAttr = 'data-theme';
+    var storageKey = 'ytkb-theme';
+    var html = document.documentElement;
     try {
-      var t = localStorage.getItem('ytkb-theme');
-      if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      }
-    } catch (e) {}
+      var saved = localStorage.getItem(storageKey);
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = saved || (prefersDark ? 'dark' : 'light');
+      html.setAttribute(themeAttr, theme);
+    } catch (e) {
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      html.setAttribute(themeAttr, prefersDark ? 'dark' : 'light');
+    }
   })();
 </script>
-<style>
-  :root {
-    /* 暖色調：米白底、陶紅主色、墨綠點綴 */
-    --bg: #faf5ee;
-    --bg-soft: #f2e9da;
-    --bg-card: #fffaf2;
-    --bg-elevated: #ffffff;
-    --bg-code: #f4ece1;
-    --fg: #2e241c;
-    --fg-soft: #5d4f42;
-    --fg-muted: #8a7a6a;
-    --border: #e6d6c2;
-    --border-soft: #efe3d0;
-    --primary: #b8603b;
-    --primary-soft: #d18a6a;
-    --primary-deep: #9a4d2c;
-    --primary-bg: #fae3d4;
-    --accent: #4a6b58;
-    --accent-soft: #6b8a78;
-    --accent-deep: #355044;
-    --accent-bg: #dde8e0;
-    --highlight: #cba45a;
-    --shadow: rgba(60, 40, 20, 0.06);
-    --shadow-md: rgba(60, 40, 20, 0.10);
-    --shadow-lg: rgba(60, 40, 20, 0.15);
-    --radius-sm: 6px;
-    --radius: 12px;
-    --radius-lg: 20px;
-  }
-  [data-theme="dark"] {
-    /* 深褐底，柔和前景 */
-    --bg: #1a1612;
-    --bg-soft: #221c16;
-    --bg-card: #2b241d;
-    --bg-elevated: #342c23;
-    --bg-code: #3a3027;
-    --fg: #ede2d2;
-    --fg-soft: #c5b8a6;
-    --fg-muted: #948574;
-    --border: #3a322a;
-    --border-soft: #2f2820;
-    --primary: #e08965;
-    --primary-soft: #c66b4b;
-    --primary-deep: #ee9e7e;
-    --primary-bg: #3d2820;
-    --accent: #8aa888;
-    --accent-soft: #6b8a78;
-    --accent-deep: #a6c2a4;
-    --accent-bg: #28342c;
-    --highlight: #d4a35a;
-    --shadow: rgba(0, 0, 0, 0.25);
-    --shadow-md: rgba(0, 0, 0, 0.40);
-    --shadow-lg: rgba(0, 0, 0, 0.55);
-  }
-
-  *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--fg);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", "Helvetica Neue", Arial, sans-serif;
-    font-size: 16px;
-    line-height: 1.75;
-    -webkit-font-smoothing: antialiased;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  a { color: var(--primary); text-decoration: none; transition: color 0.2s ease; }
-  a:hover { color: var(--primary-deep); text-decoration: underline; }
-  [data-theme="dark"] a:hover { color: var(--primary-deep); }
-
-  /* ===== Nav ===== */
-  .nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border-soft);
-    backdrop-filter: saturate(140%) blur(8px);
-    -webkit-backdrop-filter: saturate(140%) blur(8px);
-    background-color: color-mix(in srgb, var(--bg) 88%, transparent);
-    transition: background-color 0.3s ease;
-  }
-  .nav-inner {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .brand {
-    font-weight: 700;
-    font-size: 17px;
-    color: var(--fg);
-    letter-spacing: 0.5px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .brand:hover { color: var(--primary); text-decoration: none; }
-  .brand-dot {
-    width: 10px; height: 10px; border-radius: 50%;
-    background: var(--primary);
-    display: inline-block;
-  }
-  .theme-toggle {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--fg);
-    padding: 6px 12px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-size: 15px;
-    line-height: 1;
-    transition: background 0.2s, transform 0.15s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .theme-toggle:hover { background: var(--primary-bg); }
-  .theme-toggle:active { transform: scale(0.95); }
-  .theme-icon { font-size: 14px; }
-
-  /* ===== Layout ===== */
-  .container {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-
-  /* ===== Hero ===== */
-  .hero {
-    padding: 56px 0 32px;
-    border-bottom: 1px dashed var(--border);
-    margin-bottom: 40px;
-  }
-  .kicker {
-    display: inline-block;
-    background: var(--accent-bg);
-    color: var(--accent-deep);
-    padding: 5px 14px;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1px;
-    margin-bottom: 20px;
-  }
-  [data-theme="dark"] .kicker { color: var(--accent-deep); }
-  .hero h1 {
-    font-size: clamp(26px, 4.5vw, 38px);
-    line-height: 1.35;
-    margin: 0 0 20px 0;
-    color: var(--fg);
-    font-weight: 800;
-    letter-spacing: -0.5px;
-  }
-  .one-liner {
-    background: var(--primary-bg);
-    border-left: 4px solid var(--primary);
-    padding: 16px 20px;
-    border-radius: 0 var(--radius) var(--radius) 0;
-    font-size: 17px;
-    color: var(--fg);
-    margin: 24px 0 28px;
-    font-weight: 500;
-  }
-  [data-theme="dark"] .one-liner { color: var(--fg); }
-
-  /* Video card */
-  .video-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 20px;
-    box-shadow: var(--shadow);
-    display: flex;
-    gap: 18px;
-    align-items: center;
-    margin-top: 24px;
-    transition: background 0.3s, border-color 0.3s;
-  }
-  .video-thumb {
-    flex: 0 0 120px;
-    width: 120px; height: 80px;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%);
-    border-radius: var(--radius);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 26px;
-    position: relative;
-  }
-  .video-thumb::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.25) 100%);
-    border-radius: var(--radius);
-  }
-  .video-info { flex: 1; min-width: 0; }
-  .video-info .source-tag {
-    font-size: 12px;
-    color: var(--fg-muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .video-info .v-title {
-    font-weight: 700;
-    color: var(--fg);
-    margin-bottom: 6px;
-    line-height: 1.35;
-  }
-  .video-info .v-meta {
-    font-size: 13px;
-    color: var(--fg-soft);
-  }
-  .video-info .v-id {
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    background: var(--bg-code);
-    padding: 1px 6px;
-    border-radius: 4px;
-    font-size: 12px;
-  }
-
-  /* ===== Section header ===== */
-  .section-head {
-    margin: 56px 0 24px;
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-  }
-  .section-head .num {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--primary);
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    line-height: 1;
-    flex-shrink: 0;
-  }
-  .section-head h2 {
-    font-size: clamp(20px, 3vw, 24px);
-    margin: 0;
-    color: var(--fg);
-    font-weight: 700;
-    line-height: 1.4;
-  }
-  .section-head .rule {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(to right, var(--border), transparent);
-    display: none;
-  }
-
-  /* ===== Card ===== */
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-soft);
-    border-radius: var(--radius);
-    padding: 22px 24px;
-    box-shadow: var(--shadow);
-    margin-bottom: 14px;
-    transition: background 0.3s, border-color 0.3s, transform 0.2s;
-  }
-  .card:hover {
-    border-color: var(--border);
-    box-shadow: var(--shadow-md);
-  }
-  .card-title {
-    font-weight: 700;
-    color: var(--primary);
-    margin: 0 0 10px;
-    font-size: 17px;
-  }
-  .card p { margin: 0 0 10px; }
-  .card ul { margin: 8px 0 0; padding-left: 22px; }
-  .card li { margin-bottom: 6px; }
-  .card li::marker { color: var(--primary); }
-
-  /* Nested sub-card */
-  .sub-cards {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-top: 14px;
-  }
-  .sub-card {
-    background: var(--bg-soft);
-    border: 1px solid var(--border-soft);
-    border-radius: var(--radius-sm);
-    padding: 14px 16px;
-  }
-  .sub-card .label {
-    font-size: 12px;
-    color: var(--accent-deep);
-    letter-spacing: 1px;
-    font-weight: 700;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .sub-card p { margin: 0; color: var(--fg-soft); font-size: 15px; }
-
-  /* Origin tags */
-  .origin-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    margin-top: 14px;
-  }
-  .origin-tag {
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    border: 1.5px solid;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .origin-tag code {
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 14px;
-    font-weight: 700;
-  }
-  .origin-tag .desc { font-size: 13.5px; color: var(--fg-soft); }
-
-  .tag-self {
-    background: var(--primary-bg);
-    border-color: var(--primary);
-    color: var(--primary-deep);
-  }
-  .tag-agent {
-    background: var(--accent-bg);
-    border-color: var(--accent);
-    color: var(--accent-deep);
-  }
-  .tag-clipped {
-    background: var(--bg-soft);
-    border-color: var(--border);
-    color: var(--fg-soft);
-  }
-  [data-theme="dark"] .tag-self { color: var(--primary-deep); }
-  [data-theme="dark"] .tag-agent { color: var(--accent-deep); }
-
-  /* Code-like inline */
-  code.inline, .code-key {
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    background: var(--bg-code);
-    padding: 1px 7px;
-    border-radius: 4px;
-    font-size: 0.92em;
-    color: var(--primary-deep);
-    border: 1px solid var(--border-soft);
-  }
-
-  /* Quote / callout */
-  .callout {
-    background: var(--primary-bg);
-    border: 1px solid var(--primary-soft);
-    border-radius: var(--radius);
-    padding: 16px 18px;
-    margin: 16px 0;
-    color: var(--fg);
-    font-weight: 500;
-  }
-  .callout::before {
-    content: "💡";
-    margin-right: 8px;
-    font-size: 16px;
-  }
-
-  /* ===== Closing ===== */
-  .closing {
-    margin-top: 56px;
-    padding: 32px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    text-align: center;
-    box-shadow: var(--shadow);
-  }
-  .closing h3 {
-    margin: 0 0 12px;
-    font-size: 20px;
-    color: var(--accent-deep);
-  }
-  .closing p { color: var(--fg-soft); margin: 8px 0; }
-  .cta-btn {
-    display: inline-block;
-    margin-top: 14px;
-    background: var(--primary);
-    color: #fff;
-    padding: 11px 26px;
-    border-radius: 999px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    box-shadow: var(--shadow);
-    transition: background 0.2s, transform 0.15s;
-  }
-  .cta-btn:hover {
-    background: var(--primary-deep);
-    color: #fff;
-    text-decoration: none;
-    transform: translateY(-1px);
-  }
-
-  /* ===== Footer ===== */
-  footer {
-    margin-top: 48px;
-    padding: 28px 0 80px;
-    border-top: 1px dashed var(--border);
-    color: var(--fg-muted);
-    font-size: 14px;
-  }
-  .source-note {
-    text-align: center;
-    line-height: 1.7;
-  }
-  .source-note a { font-weight: 600; }
-  .video-nav {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-top: 28px;
-  }
-  .video-nav a, .video-nav .disabled {
-    display: block;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 18px;
-    transition: border-color 0.2s, background 0.2s, transform 0.15s;
-  }
-  .video-nav a:hover {
-    border-color: var(--primary);
-    text-decoration: none;
-    transform: translateY(-1px);
-  }
-  .video-nav .label {
-    font-size: 12px;
-    color: var(--fg-muted);
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    font-weight: 600;
-  }
-  .video-nav .t {
-    color: var(--fg);
-    font-weight: 700;
-    line-height: 1.35;
-    display: block;
-  }
-  .video-nav .arrow { color: var(--primary); font-weight: 700; }
-  .video-nav .disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-  }
-
-  /* ===== Back to top ===== */
-  .back-to-top {
-    position: fixed;
-    right: 22px; bottom: 22px;
-    width: 44px; height: 44px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    font-size: 20px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: var(--shadow-lg);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(8px);
-    transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease, background 0.2s;
-    z-index: 90;
-  }
-  .back-to-top.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
-  .back-to-top:hover { background: var(--primary-deep); }
-
-  /* ===== Responsive ===== */
-  @media (min-width: 600px) {
-    .hero { padding: 72px 0 40px; }
-    .video-card { padding: 24px; gap: 24px; }
-    .video-thumb { flex: 0 0 160px; width: 160px; height: 96px; font-size: 32px; }
-    .sub-cards { grid-template-columns: 1fr 1fr; }
-    .section-head .rule { display: block; }
-  }
-  @media (max-width: 480px) {
-    .video-card { flex-direction: column; align-items: flex-start; }
-    .video-thumb { width: 100%; height: 120px; }
-    .closing { padding: 24px 18px; }
-    .video-nav { grid-template-columns: 1fr; }
-  }
-</style>
+<link rel="stylesheet" href="../shared.css">
 </head>
 <body>
 
@@ -531,7 +38,7 @@
 
 <main class="container">
 
-  <!-- HERO -->
+  <!-- Hero -->
   <section class="hero">
     <span class="kicker">實戰分享 · 工具思維</span>
     <h1>Obsidian 裝了卻不會用？<br>我這樣用它做完一支影片</h1>
@@ -540,6 +47,7 @@
       Obsidian 的價值不在「它是筆記軟體」，而是「把外部蒐集＋自己想法統一收進本地庫，讓 AI 能隨時分析、自己能隨時引用」的<strong>第二大腦</strong>。
     </div>
 
+    <!-- 視頻卡片：觀看連結、影片 ID -->
     <div class="video-card">
       <div class="video-thumb" aria-hidden="true">▶</div>
       <div class="video-info">
@@ -552,211 +60,129 @@
     </div>
   </section>
 
-  <!-- 1. 影片完整流程 -->
+  <!-- Section 1 -->
   <div class="section-head">
-    <span class="num">01</span>
-    <h2>用 Obsidian 做一支影片的完整流程</h2>
-  </div>
-  <div class="card">
-    <p>從靈感打點、查資料、寫文案、發布到數據復盤，所有步驟的素材都被收進同一個本地庫，往後每支影片都能從裡面挖東西再產出。</p>
-    <ul>
-      <li><strong>選題：</strong>靈感先打分，留下值得做的題目</li>
-      <li><strong>查資料：</strong>用官方 Web Clipper（Chrome 插件）一鍵把網頁整篇摘成文字，自動存進 <code class="code-key">clippings</code> 資料夾</li>
-      <li><strong>融合想法：</strong>碎片時間（走路、開車）用手機錄音隨講隨想，AI 轉文字後自動同步回 Obsidian</li>
-      <li><strong>寫文案、發布、復盤：</strong>全部在同一個資料庫裡循環</li>
-    </ul>
-    <div class="callout">
-      重點不是某個工具，而是<strong>把「外部蒐集」和「自己講的東西」統一收進同一個本地庫</strong>，變成可持續累積的素材池。
-    </div>
+    <span class="num">1</span>
+    <h2>建立知識庫：YT-KB Pipeline</h2>
   </div>
 
-  <!-- 2. 關鍵工具 -->
-  <div class="section-head">
-    <span class="num">02</span>
-    <h2>三個關鍵工具</h2>
-  </div>
-  <div class="sub-cards">
-    <div class="sub-card">
-      <div class="label">① 蒐集</div>
-      <p><strong style="color:var(--primary-deep)">Web Clipper</strong><br>官方插件，瀏覽器上一鍵把網頁整篇摘成筆記，無需手動複製貼上。</p>
-    </div>
-    <div class="sub-card">
-      <div class="label">② 記錄想法</div>
-      <p><strong style="color:var(--primary-deep)">手機錄音／錄音卡片</strong><br>走路、開車想到什麼隨口講，AI（ChatGPT／Claude）轉成文字，自動回傳 Obsidian。</p>
-    </div>
-    <div class="sub-card">
-      <div class="label">③ 整理想法</div>
-      <p><strong style="color:var(--primary-deep)">Claudian 插件</strong><br>把 Claude 接入 Obsidian：整理想法、改錯字、過濾廢話、總結大意都交給 AI。</p>
-    </div>
-  </div>
-
-  <!-- 3. origin 原則 -->
-  <div class="section-head">
-    <span class="num">03</span>
-    <h2>核心原則：用 <code class="inline">origin</code> 欄位區分來源</h2>
-  </div>
   <div class="card">
-    <p>每篇筆記最上面都加一個 <code class="inline">origin</code> 欄位，三種標籤：</p>
-    <div class="origin-grid">
-      <div class="origin-tag tag-self">
-        <code class="inline" style="background:transparent;border:none;color:inherit">self-written</code>
-        <span class="desc">自己寫的／自己講的</span>
-      </div>
-      <div class="origin-tag tag-agent">
-        <code class="inline" style="background:transparent;border:none;color:inherit">agent-compiled</code>
-        <span class="desc">AI 整理的</span>
-      </div>
-      <div class="origin-tag tag-clipped">
-        <code class="inline" style="background:transparent;border:none;color:inherit">clipped</code>
-        <span class="desc">從別人網頁摘來的</span>
-      </div>
-    </div>
-    <div class="callout">
-      Obsidian 是第二大腦，要分得清楚<strong>哪些是自己的內容</strong>。日後搜關鍵字＋篩選 <code class="inline">origin</code>，就能立刻定位「這段是我自己想的，還是別人說的」。
-    </div>
-  </div>
-
-  <!-- 4. 讀書筆記庫 -->
-  <div class="section-head">
-    <span class="num">04</span>
-    <h2>第二個案例：讓 ChatGPT 當陪讀老師</h2>
-  </div>
-  <div class="card">
-    <ul>
-      <li>讀到金句時直接說「這句原封不動記下來」</li>
-      <li>讀完讓 AI 把「<strong>原句＋自己的感想</strong>」整理成讀書筆記，寫進 Obsidian</li>
-      <li>日後想引用，<strong>搜書名或大意就能定位</strong></li>
-    </ul>
-    <div class="callout">
-      讀書不是記錄別人說過什麼，而是記錄「別人說了什麼 <strong>＋</strong> 我怎麼想」。這套流程讓知識真的變成你的。
-    </div>
-  </div>
-
-  <!-- 5. 數據復盤 -->
-  <div class="section-head">
-    <span class="num">05</span>
-    <h2>數據復盤：不只做內容，連銷售都復盤</h2>
-  </div>
-  <div class="card">
-    <ul>
-      <li><strong>規律庫</strong>＋<strong>數據反饋庫</strong></li>
-      <li>每期後台數據丟進去，讓 AI 整理、總結</li>
-      <li>不只是影片觀看數，<strong>銷售數據、投放、每月開銷</strong>都能復盤</li>
-    </ul>
-  </div>
-
-  <!-- 6. 共通邏輯 -->
-  <div class="section-head">
-    <span class="num">06</span>
-    <h2>兩個案例的共通邏輯</h2>
-  </div>
-  <div class="card">
-    <p>把<strong>所有想法（外部蒐集＋自己講的）</strong>統一收進本地庫，再練出三個能力：</p>
+    <div class="card-title">核心概念</div>
+    <p>每支影片產出一個靜態 HTML，放進 <code class="inline">videos/</code> 目錄，GitHub Pages 自動部署。知識庫 = 靜態檔案 + Git 版本控制，零資料庫、零維護成本。</p>
     <div class="sub-cards">
       <div class="sub-card">
-        <div class="label">能力 A</div>
-        <p><strong style="color:var(--primary-deep)">隨時引用</strong><br>過一兩年都找得到、能引用</p>
+        <div class="label">輸入</div>
+        <p>YouTube 影片連結（需有 CC 字幕，語言不限）</p>
       </div>
       <div class="sub-card">
-        <div class="label">能力 B</div>
-        <p><strong style="color:var(--primary-deep)">讓 AI 分析</strong><br>本地資料可餵給 AI 做總結</p>
-      </div>
-      <div class="sub-card">
-        <div class="label">能力 C</div>
-        <p><strong style="color:var(--primary-deep)">區分來源</strong><br>自己寫的 vs AI 寫的，分得清清楚楚</p>
+        <div class="label">產出</div>
+        <p>繁體中文摘要網頁 + 影片卡片 + 導航連結</p>
       </div>
     </div>
   </div>
 
-  <!-- 7. Obsidian 獨特優勢 -->
-  <div class="section-head">
-    <span class="num">07</span>
-    <h2>Obsidian 為什麼特別適合當第二大腦</h2>
-  </div>
   <div class="card">
+    <div class="card-title">關鍵規則：輸出語言固定繁體中文</div>
+    <p>無論影片字幕為英文、日文、簡體中文或其他語言，AI 產出的所有文字內容（摘要、重點、代碼註解、說明文件）<strong>統一使用繁體中文</strong>。這是知識庫語言一致性的核心規範，避免未來檢索時出現多語言混雜。</p>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="section-head">
+    <span class="num">2</span>
+    <h2>Origin 欄位：來源可追溯</div>
+  </div>
+
+  <p>每個重點卡片都標註 <code class="inline">origin</code> 來源，三種類型：</p>
+  <div class="origin-grid">
+    <div class="origin-tag tag-self">
+      <code>self</code>
+      <span class="desc">創作者親自說的、演示的內容</span>
+    </div>
+    <div class="origin-tag tag-agent">
+      <code>agent</code>
+      <span class="desc">AI 根據上下文推論、補充、整理的內容</span>
+    </div>
+    <div class="origin-tag tag-clipped">
+      <code>clipped</code>
+      <span class="desc">直接引用字幕逐字稿片段</span>
+    </div>
+  </div>
+  <p>這樣未來回頭看，能立刻分辨「這是影片原話」還是「AI 補充的」，建立信任鏈。</p>
+
+  <!-- Section 3 -->
+  <div class="section-head">
+    <span class="num">3</span>
+    <h2>讀書筆記庫：雙向連結</h2>
+  </div>
+
+  <div class="card">
+    <div class="card-title">同步建立 Obsidian 筆記</div>
+    <p>每支影片產出網頁的同時，也在本地 Obsidian Vault 建立對應筆記：</p>
     <ul>
-      <li><strong>檔案是本地 MD 文檔</strong> — 對 AI 來說「上下文無限、永遠在」</li>
-      <li><strong>沒有對話窗口上限</strong> — 不像 ChatGPT／Claude 聊到後面就找不到舊訊息</li>
-      <li><strong>過一兩年還能引用</strong> — 永久保存在自己硬碟</li>
-      <li><strong>雙鏈（Wikilink / Backlink）</strong> — 自動發現筆記之間的隱藏連結</li>
+      <li>Frontmatter：影片 ID、標題、日期、標籤、YouTube 連結</li>
+      <li>內容：同步網頁摘要、重點、origin 標註</li>
+      <li>雙向連結：<code class="inline">[[YT-KB]]</code> ↔ <code class="inline">[[Obsidian 實戰]]</code> 互相引用</li>
     </ul>
+  </div>
+
+  <div class="callout">
+    關鍵：Obsidian 是「可寫、可查、可被 AI 讀取」的本地知識庫；YT-KB 網頁是「可分享、可公開、可被搜尋引擎收錄」的公開面。兩者互補，不是替代。
+  </div>
+
+  <!-- Section 4 -->
+  <div class="section-head">
+    <span class="num">4</span>
+    <h2>Pipeline 自動化：從字幕到網頁</h2>
+  </div>
+
+  <div class="sub-cards">
+    <div class="sub-card">
+      <div class="label">1. 抓取字幕</div>
+      <p>yt-dlp / YouTube API 抓取 CC 字幕（vtt/srt），語言不限</li>
+    </div>
+    <div class="sub-card">
+      <div class="label">2. AI 摘要 + 結構化</div>
+      <p>Prompt 內建「輸出繁體中文」規則，產出 Markdown 結構</p>
+    </div>
+    <div class="sub-card">
+      <div class="label">3. 注入模板產出 HTML</div>
+      <p>共用 CSS/JS 模板 + 視頻卡片 + 導航自動生成</p>
+    </div>
+    <div class="sub-card">
+      <div class="label">4. Git Push → GitHub Pages</div>
+      <p>自動部署，零伺服器維護</p>
+    </div>
   </div>
 
   <!-- Closing -->
-  <section class="closing">
-    <h3>給「裝了 Obsidian 卻不知道怎麼用」的你</h3>
-    <p>別再糾結軟體本身。<strong>先把東西收進來</strong>，再慢慢讓 AI 幫你整理、回顧、引用。</p>
-    <p>第二大腦不是裝了就有，是用了才長出來。</p>
-    <a class="cta-btn" href="https://youtu.be/LCIPEQb1V0Q" target="_blank" rel="noopener noreferrer">
-      ▶ 觀看原始影片
-    </a>
-  </section>
-
-</main>
-
-<footer>
-  <div class="container">
-    <div class="source-note">
-      <p>內容整理自 YouTube 影片<a href="https://youtu.be/LCIPEQb1V0Q" target="_blank" rel="noopener noreferrer">《Obsidian裝了卻不會用？我這樣用它做完一支影片｜實戰分享》</a></p>
-      <p>影片 ID：LCIPEQb1V0Q · 摘要整理日期 2026-08-23</p>
-    </div>
-    <nav class="video-nav" aria-label="影片頁導航">
-      <a href="claude-md.html">
-        <div class="label">← 上一部</div>
-        <span class="t"><span class="arrow">←</span> 15 分鐘學完 CLAUDE.md：從入門到精通</span>
-      </a>
-      <div class="disabled" aria-disabled="true">
-        <div class="label">下一部 →</div>
-        <span class="t">敬請期待</span>
-      </div>
-    </nav>
+  <div class="closing">
+    <h3>把影片變成可檢索、可引用、可分享的知識資產</h3>
+    <p>不只是看完忘記，而是每一分鐘的洞見都能在未來被 AI、被自己、被團隊找到、理解、復用。</p>
+    <a href="https://youtu.be/LCIPEQb1V0Q" target="_blank" rel="noopener noreferrer" class="cta-btn">觀看原影片 →</a>
   </div>
-</footer>
 
-<button class="back-to-top" id="backToTop" aria-label="回到頂部">↑</button>
+  <!-- Source -->
+  <footer>
+    <div class="container">
+      <div class="source-note">
+        <p>內容整理自 YouTube 影片<a href="https://youtu.be/LCIPEQb1V0Q" target="_blank" rel="noopener noreferrer">《Obsidian裝了卻不會用？我這樣用它做完一支影片｜實戰分享》</a></p>
+        <p>影片 ID：LCIPEQb1V0Q · 摘要整理日期 2026-08-23</p>
+      </div>
+      <nav class="video-nav" aria-label="影片頁導航">
+        <a href="claude-md.html">
+          <div class="label">← 上一部</div>
+          <span class="t"><span class="arrow">←</span> 15 分鐘學完 CLAUDE.md：從入門到精通</span>
+        </a>
+        <div class="disabled" aria-disabled="true">
+          <div class="label">下一部 →</div>
+          <span class="t">敬請期待</span>
+        </div>
+      </nav>
+    </div>
+  </footer>
 
-<script>
-  // ===== Theme toggle =====
-  (function() {
-    var html = document.documentElement;
-    var btn = document.getElementById('themeToggle');
-    var icon = document.getElementById('themeIcon');
+<button class="back-to-top" id="back-to-top" aria-label="回到頂部">↑</button>
 
-    function setIcon() {
-      var dark = html.getAttribute('data-theme') === 'dark';
-      icon.textContent = dark ? '☀️' : '🌙';
-      btn.setAttribute('aria-label', dark ? '切換為淺色主題' : '切換為深色主題');
-    }
-    setIcon();
-
-    btn.addEventListener('click', function() {
-      var isDark = html.getAttribute('data-theme') === 'dark';
-      if (isDark) {
-        html.removeAttribute('data-theme');
-        try { localStorage.setItem('ytkb-theme', 'light'); } catch(e){}
-      } else {
-        html.setAttribute('data-theme', 'dark');
-        try { localStorage.setItem('ytkb-theme', 'dark'); } catch(e){}
-      }
-      setIcon();
-    });
-  })();
-
-  // ===== Back to top =====
-  (function() {
-    var btn = document.getElementById('backToTop');
-    var threshold = 400;
-    function onScroll() {
-      if (window.scrollY > threshold) btn.classList.add('show');
-      else btn.classList.remove('show');
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    btn.addEventListener('click', function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  })();
-</script>
-
+<script src="../shared.js"></script>
 </body>
 </html>

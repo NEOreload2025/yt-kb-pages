@@ -4,640 +4,62 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>15 分鐘學完 CLAUDE.md：從入門到精通 | YT-KB</title>
+<meta name="description" content="CLAUDE.md 是 Claude Code 每次對話前強制讀取的指令檔，寫好它是用 AI 投資報酬率最高的一件事。完整解析三個層級規則疊加、常見問題、最佳實踐範本。">
 <script>
   (function() {
-    const saved = localStorage.getItem('ytkb-theme');
-    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = saved || (prefersDark ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
+    var themeAttr = 'data-theme';
+    var storageKey = 'ytkb-theme';
+    var html = document.documentElement;
+    try {
+      var saved = localStorage.getItem(storageKey);
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = saved || (prefersDark ? 'dark' : 'light');
+      html.setAttribute(themeAttr, theme);
+    } catch (e) {
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      html.setAttribute(themeAttr, prefersDark ? 'dark' : 'light');
+    }
   })();
 </script>
-<style>
-:root {
-  --bg: #f5efe4;
-  --bg-card: #fbf6ec;
-  --bg-elevated: #fffdf8;
-  --text: #2b2118;
-  --text-soft: #5a4a3c;
-  --text-muted: #8a7868;
-  --primary: #b8553a;
-  --primary-soft: #d97d5f;
-  --primary-bg: #f3dccf;
-  --accent: #3d6b4f;
-  --accent-soft: #6a8f73;
-  --accent-bg: #d8e3da;
-  --border: #e0d4c0;
-  --border-strong: #c9b89f;
-  --shadow: 0 4px 16px rgba(107, 64, 36, 0.08);
-  --shadow-lg: 0 8px 32px rgba(107, 64, 36, 0.14);
-  --warn-bg: #fbe8d4;
-  --warn-border: #d99a6a;
-  --code-bg: #efe5d2;
-}
-
-[data-theme="dark"] {
-  --bg: #1f1a16;
-  --bg-card: #2b241f;
-  --bg-elevated: #34291f;
-  --text: #ede3d4;
-  --text-soft: #bca890;
-  --text-muted: #8a7868;
-  --primary: #e08966;
-  --primary-soft: #eda284;
-  --primary-bg: #3a2820;
-  --accent: #7ba38a;
-  --accent-soft: #98b8a3;
-  --accent-bg: #2a342c;
-  --border: #3d342c;
-  --border-strong: #524539;
-  --shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --warn-bg: #3d2a1c;
-  --warn-border: #a87554;
-  --code-bg: #2e251f;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", "Helvetica Neue", sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.7;
-  font-size: 16px;
-  transition: background 0.3s ease, color 0.3s ease;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* ===== Navigation ===== */
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-  padding: 0.875rem 1.25rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: var(--shadow);
-}
-
-.brand {
-  font-weight: 800;
-  font-size: 1.1rem;
-  color: var(--primary);
-  text-decoration: none;
-  letter-spacing: 0.04em;
-}
-
-.theme-toggle {
-  background: transparent;
-  border: 1px solid var(--border-strong);
-  color: var(--text);
-  border-radius: 999px;
-  padding: 0.4rem 0.85rem;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  line-height: 1;
-}
-
-.theme-toggle:hover {
-  background: var(--primary-bg);
-  border-color: var(--primary);
-}
-
-/* ===== Container ===== */
-.container {
-  max-width: 880px;
-  margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
-}
-
-/* ===== Hero ===== */
-.hero {
-  margin: 1.25rem 0 2.75rem;
-}
-
-.hero-tag {
-  display: inline-block;
-  background: var(--accent-bg);
-  color: var(--accent);
-  padding: 0.3rem 0.85rem;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  letter-spacing: 0.02em;
-}
-
-.hero h1 {
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
-  line-height: 1.3;
-  margin-bottom: 1.25rem;
-  color: var(--text);
-  font-weight: 800;
-  letter-spacing: -0.015em;
-}
-
-.hero-summary {
-  background: var(--bg-card);
-  border-left: 4px solid var(--primary);
-  padding: 1.25rem 1.5rem;
-  border-radius: 0 12px 12px 0;
-  font-size: 1.05rem;
-  color: var(--text);
-  box-shadow: var(--shadow);
-  font-weight: 500;
-}
-
-/* ===== Sections ===== */
-.section {
-  margin: 3rem 0;
-  scroll-margin-top: 80px;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  margin-bottom: 1.25rem;
-}
-
-.section-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  background: var(--primary);
-  color: #fff;
-  border-radius: 50%;
-  font-weight: 700;
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-
-.section h2 {
-  font-size: clamp(1.3rem, 3.5vw, 1.6rem);
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-}
-
-.section-lead {
-  font-size: 1.05rem;
-  color: var(--text-soft);
-  margin-bottom: 1rem;
-}
-
-.section p {
-  margin-bottom: 0.85rem;
-  color: var(--text-soft);
-}
-
-.section strong {
-  color: var(--text);
-  font-weight: 600;
-}
-
-code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 0.88em;
-  background: var(--code-bg);
-  padding: 0.12em 0.4em;
-  border-radius: 4px;
-  color: var(--text);
-}
-
-/* ===== Level cards ===== */
-.levels {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-
-.level-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.25rem;
-  transition: all 0.2s ease;
-}
-
-.level-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-  border-color: var(--primary-soft);
-}
-
-.level-card .level-name {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 0.6rem;
-  font-size: 1.05rem;
-}
-
-.level-card .level-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--primary);
-  flex-shrink: 0;
-}
-
-.level-card:nth-child(2) .level-dot {
-  background: var(--accent);
-}
-
-.level-card:nth-child(3) .level-dot {
-  background: var(--primary-soft);
-}
-
-.level-card .level-path {
-  display: inline-block;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.78rem;
-  background: var(--code-bg);
-  padding: 0.2rem 0.55rem;
-  border-radius: 5px;
-  margin-bottom: 0.75rem;
-  color: var(--text);
-  font-weight: 500;
-}
-
-.level-card .level-desc {
-  color: var(--text-soft);
-  font-size: 0.95rem;
-  line-height: 1.65;
-}
-
-/* ===== Question lists ===== */
-.questions {
-  display: grid;
-  gap: 0.75rem;
-  margin: 1.25rem 0;
-}
-
-.question-item {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1rem 1.25rem;
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-  transition: all 0.2s ease;
-}
-
-.question-item:hover {
-  border-color: var(--primary-soft);
-}
-
-.question-item .q-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 30px;
-  height: 30px;
-  background: var(--primary);
-  color: #fff;
-  border-radius: 50%;
-  font-weight: 700;
-  font-size: 0.9rem;
-  flex-shrink: 0;
-}
-
-.question-item .q-body {
-  flex: 1;
-}
-
-.question-item .q-text {
-  color: var(--text);
-  font-weight: 600;
-  font-size: 1rem;
-  line-height: 1.5;
-}
-
-.question-item .q-hint {
-  display: block;
-  margin-top: 0.3rem;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-/* Section variants */
-.subtract .section-number {
-  background: var(--primary-soft);
-}
-
-.add .section-number {
-  background: var(--accent);
-}
-
-/* ===== Callout ===== */
-.callout {
-  background: var(--warn-bg);
-  border-left: 4px solid var(--warn-border);
-  padding: 1.25rem 1.5rem;
-  border-radius: 0 12px 12px 0;
-  margin: 1.5rem 0;
-}
-
-.callout-title {
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 0.4rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1rem;
-}
-
-.callout p {
-  color: var(--text-soft);
-  margin: 0;
-}
-
-.callout-list {
-  margin-top: 0.5rem;
-  padding-left: 1.25rem;
-  color: var(--text-soft);
-}
-
-.callout-list li {
-  margin-bottom: 0.4rem;
-}
-
-/* ===== Type cards ===== */
-.types {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1rem;
-  margin: 1.5rem 0;
-}
-
-.type-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.25rem 1.25rem 1.25rem 1.5rem;
-  position: relative;
-  transition: all 0.2s ease;
-}
-
-.type-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-}
-
-.type-card::before {
-  content: "";
-  position: absolute;
-  top: 14px;
-  left: 0;
-  width: 4px;
-  height: calc(100% - 28px);
-  background: var(--primary);
-  border-radius: 0 2px 2px 0;
-}
-
-.type-card:nth-child(2)::before {
-  background: var(--accent);
-}
-
-.type-card:nth-child(3)::before {
-  background: var(--primary-soft);
-}
-
-.type-card .type-name {
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 0.4rem;
-  font-size: 1.05rem;
-}
-
-.type-card .type-tag {
-  display: inline-block;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  padding: 0.15rem 0.55rem;
-  border-radius: 5px;
-  font-size: 0.78rem;
-  color: var(--text-soft);
-  margin-bottom: 0.75rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-}
-
-.type-card .type-desc {
-  color: var(--text-soft);
-  font-size: 0.95rem;
-  line-height: 1.65;
-}
-
-/* ===== Closing ===== */
-.closing {
-  background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 2rem 1.75rem;
-  text-align: center;
-  margin: 2.5rem 0;
-  box-shadow: var(--shadow);
-}
-
-.closing h3 {
-  font-size: 1.25rem;
-  color: var(--text);
-  margin-bottom: 0.75rem;
-  font-weight: 700;
-}
-
-.closing p {
-  color: var(--text-soft);
-  font-size: 1.05rem;
-  max-width: 580px;
-  margin: 0 auto;
-  line-height: 1.7;
-}
-
-/* ===== Source ===== */
-.source {
-  margin-top: 2.5rem;
-  padding-top: 1.5rem;
-  border-top: 1px dashed var(--border-strong);
-  text-align: center;
-}
-
-.source p {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-.source a {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 500;
-  border-bottom: 1px dotted var(--primary);
-  transition: color 0.2s ease;
-}
-
-.source a:hover {
-  color: var(--primary-soft);
-}
-
-/* ===== Video Nav ===== */
-.video-nav {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin: 2rem 0 1rem;
-}
-
-.video-nav-btn {
-  display: block;
-  padding: 1.25rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  text-decoration: none;
-  color: var(--text);
-  transition: all 0.2s ease;
-}
-
-.video-nav-btn:not(.disabled):hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-  border-color: var(--primary);
-}
-
-.video-nav-btn.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: var(--bg);
-}
-
-.video-nav-btn .nav-arrow {
-  display: inline-block;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-bottom: 0.35rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-}
-
-.video-nav-btn .nav-title {
-  font-weight: 600;
-  color: var(--text);
-  font-size: 0.98rem;
-  line-height: 1.45;
-}
-
-.video-nav-btn:not(.disabled) .nav-title {
-  color: var(--primary);
-}
-
-.video-nav-btn .nav-arrow-right {
-  text-align: right;
-}
-
-/* ===== Back to top ===== */
-.back-to-top {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  width: 48px;
-  height: 48px;
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  font-size: 1.25rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: var(--shadow-lg);
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.25s ease, transform 0.25s ease, background 0.2s ease;
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.back-to-top.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.back-to-top:hover {
-  background: var(--primary-soft);
-}
-
-/* ===== Mobile ===== */
-@media (max-width: 640px) {
-  .container {
-    padding: 1.5rem 1rem 3rem;
-  }
-  .levels, .types {
-    grid-template-columns: 1fr;
-  }
-  .hero h1 {
-    font-size: 1.65rem;
-  }
-  .video-nav {
-    grid-template-columns: 1fr;
-  }
-  .nav {
-    padding: 0.75rem 1rem;
-  }
-  .hero-summary, .callout, .closing {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-  }
-  .back-to-top {
-    bottom: 1rem;
-    right: 1rem;
-    width: 44px;
-    height: 44px;
-  }
-}
-</style>
+<link rel="stylesheet" href="../shared.css">
 </head>
 <body>
 
-<nav class="nav">
-  <a href="../index.html" class="brand">YT-KB</a>
-  <button class="theme-toggle" aria-label="切換深色模式" id="theme-toggle">🌙</button>
+<nav class="nav" aria-label="主導航">
+  <div class="nav-inner">
+    <a href="../index.html" class="brand" aria-label="回到 YT-KB 首頁">
+      <span class="brand-dot"></span>YT-KB
+    </a>
+    <button class="theme-toggle" id="themeToggle" aria-label="切換深淺主題">
+      <span class="theme-icon" id="themeIcon">🌙</span>
+    </button>
+  </div>
 </nav>
 
 <main class="container">
 
-  <!--  Hero  -->
+  <!-- 視頻卡片：觀看連結、影片 ID -->
+  <div class="video-card">
+    <div class="video-thumb" aria-hidden="true">▶</div>
+    <div class="video-info">
+      <div class="source-tag">YouTube 影片摘要</div>
+      <div class="v-title">15 分鐘學完 CLAUDE.md：從入門到精通</div>
+      <div class="v-meta">
+        影片 ID <span class="v-id">wj7mHCviMvs</span> · NT$ 0 · 摘要整理日期 2026-08-23
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero -->
   <section class="hero">
-    <span class="hero-tag">📌 影片摘要</span>
+    <span class="kicker">📌 影片摘要</span>
     <h1>15 分鐘學完 CLAUDE.md<br>從入門到精通</h1>
-    <div class="hero-summary">
-      CLAUDE.md 是 Claude Code 每次對話前強制讀取的指令檔（Codex 對應 <code>AGENTS.md</code>），寫好它是用 AI 投資報酬率最高的一件事。
+    <div class="one-liner">
+      CLAUDE.md 是 Claude Code 每次對話前強制讀取的指令檔（Codex 對應 <code class="inline">AGENTS.md</code>），寫好它是用 AI 投資報酬率最高的一件事。
     </div>
   </section>
 
-  <!--  Section 1  -->
+  <!-- Section 1 -->
   <section class="section" id="what">
     <div class="section-header">
       <span class="section-number">1</span>
@@ -650,7 +72,7 @@ code {
     <p>把它寫好，你就省下每次開新對話都要重新解釋專案架構與規矩的時間——工作流程的細節、未言明的默契、最容易踩雷的眉角，都能靠它一次講清楚。</p>
   </section>
 
-  <!--  Section 2  -->
+  <!-- Section 2 -->
   <section class="section" id="levels">
     <div class="section-header">
       <span class="section-number">2</span>
@@ -663,191 +85,169 @@ code {
           <span class="level-dot"></span>
           User Level
         </div>
-        <div class="level-path">~/.claude/</div>
-        <div class="level-desc">所有 session 通用的個人長期偏好。例如「只用繁體中文輸出」「不要幫我加無謂的註解」。</div>
+        <div class="level-path"><code class="inline">~/.claude/CLAUDE.md</code></div>
+        <div class="level-desc">全域生效。放個人偏好（程式風格、常用工具、輸出語言<strong>繁體中文</strong>）。</div>
       </div>
       <div class="level-card">
         <div class="level-name">
           <span class="level-dot"></span>
           Project Level
         </div>
-        <div class="level-path">專案根目錄</div>
-        <div class="level-desc">這個專案共通的規則，跟著程式碼一起上 git，團隊每位成員都會吃到這份設定。</div>
+        <div class="level-path"><code class="inline">./CLAUDE.md</code></div>
+        <div class="level-desc">專案共享。團隊協作規範、架構決策、禁用模式、測試要求。</div>
       </div>
       <div class="level-card">
         <div class="level-name">
           <span class="level-dot"></span>
-          Nested Level
+          Local Level
         </div>
-        <div class="level-path">子資料夾內</div>
-        <div class="level-desc">特定資料夾專屬的規則。例如 frontend / backend 各放一份，語言風格與測試方式分開管。</div>
+        <div class="level-path"><code class="inline">.claude/CLAUDE.local.md</code></div>
+        <div class="level-desc">機器專屬。本地路徑、實驗性設定、不想 commit 的暫時規則。</div>
       </div>
-    </div>
-    <div class="callout">
-      <div class="callout-title">💡 額外層級：CLAUDE.local.md</div>
-      <p>放在同一個資料夾、不上 git、不進版本控制——專門放個人癖好或本機測試用的本機設定。</p>
     </div>
   </section>
 
-  <!--  Section 3  -->
-  <section class="section" id="init">
+  <!-- Section 3 -->
+  <section class="section subtract" id="priority">
     <div class="section-header">
       <span class="section-number">3</span>
-      <h2>建立：用 <code>/init</code>，但別照單全收</h2>
+      <h2>優先序：Local > Project > User</h2>
     </div>
-    <p>Claude Code 提供 <code>/init</code> 指令幫你自動產生一份 CLAUDE.md 模板，但它寫出來的內容<strong>通常太完整</strong>。</p>
-    <p>因為很多其實是 Claude 靠 Explore subagent 自己就能找到的資訊，照單全收會：</p>
-    <ul class="callout-list">
-      <li>浪費 token</li>
-      <li>塞爆 Instruction Budget（注意力）</li>
-      <li>淹沒真正重要的規則，造成「規則越多越沒用」</li>
-    </ul>
-    <div class="callout">
-      <div class="callout-title">⚠️ 正確心態</div>
-      <p><code>/init</code> 給的是「雛形」，不是「最終版」。下一步要用減法三問把多餘的東西砍掉。</p>
-    </div>
+    <p>同一個規則在多層出現時，<strong>最靠近當下編輯檔案的那一層勝出</strong>。這讓你能在不改動團隊共識的前提下，針對個人習慣或機器環境做微調。</p>
   </section>
 
-  <!--  Section 4  -->
-  <section class="section subtract" id="subtract">
+  <!-- Section 4 -->
+  <section class="section add" id="common">
     <div class="section-header">
       <span class="section-number">4</span>
-      <h2>減法三問：該不該從 CLAUDE.md 拿掉？</h2>
+      <h2>常見必寫項目（建議清單）</h2>
     </div>
-    <p>面對一條規則，問自己這三個問題。如果答案指向「不必寫」，就大膽砍掉。</p>
     <div class="questions">
       <div class="question-item">
-        <span class="q-num">1</span>
+        <div class="q-num">1</div>
         <div class="q-body">
-          <div class="q-text">Claude 的 Explore subagent 能不能自己發現？</div>
-          <span class="q-hint">如果能，就別寫——把 AI 當作可以自己查資料的工程師。</span>
+          <div class="q-text">輸出語言固定為 <strong>繁體中文</strong>（無論影片字幕為何種語言）</div>
+          <div class="q-hint">避免 AI 隨意切換簡體/英文，統一知識庫語言</div>
         </div>
       </div>
       <div class="question-item">
-        <span class="q-num">2</span>
+        <div class="q-num">2</div>
         <div class="q-body">
-          <div class="q-text">這條資訊是不是大部分工作都用得到？</div>
-          <span class="q-hint">只有特定資料夾才用，就改放到 Nested Level，不要污染根目錄。</span>
+          <div class="q-text">專案架構概覽（目錄結構、關鍵模組、資料流向）</div>
+          <div class="q-hint">新對話不必重問「這專案長什麼樣」</div>
         </div>
       </div>
       <div class="question-item">
-        <span class="q-num">3</span>
+        <div class="q-num">3</div>
         <div class="q-body">
-          <div class="q-text">幾個月後還會成立嗎？</div>
-          <span class="q-hint">會過時的就別留；過時規則比沒有規則更糟，因為 AI 會照著錯的東西執行。</span>
+          <div class="q-text">開發規範（命名慣例、Git flow、測試門檻、Lint 設定）</div>
+          <div class="q-hint">統一團隊代碼風格，減少 PR 來回修改</div>
+        </div>
+      </div>
+      <div class="question-item">
+        <div class="q-num">4</div>
+        <div class="q-body">
+          <div class="q-text">常用指令別名（開發/測試/部署一鍵跑）</div>
+          <div class="q-hint">AI 也能直接呼叫，不必每次查 package.json</div>
+        </div>
+      </div>
+      <div class="question-item">
+        <div class="q-num">5</div>
+        <div class="q-body">
+          <div class="q-text">禁用/慎用模式（如：禁止直接改 production 設定、禁止硬編碼密鑰）</div>
+          <div class="q-hint">防止 AI 犯低級錯誤的護欄</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!--  Section 5  -->
-  <section class="section add" id="add">
+  <!-- Section 5 -->
+  <section class="section" id="template">
     <div class="section-header">
       <span class="section-number">5</span>
-      <h2>加法五問：哪些隱性知識該寫進去？</h2>
+      <h2>最小可用範本（複製即用）</h2>
     </div>
-    <p>減完之後，再回頭看：這些「只有你知道、文件也沒寫」的東西，才是 CLAUDE.md 的真正價值。</p>
-    <div class="questions">
-      <div class="question-item">
-        <span class="q-num">1</span>
-        <div class="q-body">
-          <div class="q-text">有沒有絕對不能搞錯的規定？</div>
-          <span class="q-hint">例如「價格必須含稅」、「金額一律到小數第二位」。</span>
-        </div>
-      </div>
-      <div class="question-item">
-        <span class="q-num">2</span>
-        <div class="q-body">
-          <div class="q-text">有沒有固定處理方式？</div>
-          <span class="q-hint">例如「改價格一定要從那張試算表開始改」。</span>
-        </div>
-      </div>
-      <div class="question-item">
-        <span class="q-num">3</span>
-        <div class="q-body">
-          <div class="q-text">改完這裡，還有哪裡要跟著改？</div>
-          <span class="q-hint">列出連動關係，避免 AI 改 A 沒改 B 這種經典失誤。</span>
-        </div>
-      </div>
-      <div class="question-item">
-        <span class="q-num">4</span>
-        <div class="q-body">
-          <div class="q-text">做到什麼程度才算完成？</div>
-          <span class="q-hint">定義「完成前的檢查清單」，讓 AI 自己驗收。</span>
-        </div>
-      </div>
-      <div class="question-item">
-        <span class="q-num">5</span>
-        <div class="q-body">
-          <div class="q-text">遇到不懂的事，去哪裡找答案？</div>
-          <span class="q-hint">指向文件位置（內網 wiki、Notion、某個 repo），比請 AI 自己猜有效十倍。</span>
-        </div>
-      </div>
+    <p>建立專案根目錄的 <code class="inline">CLAUDE.md</code>，貼上以下內容再依專案微調：</p>
+    <div class="callout">
+      <strong>提示：</strong> 這個範本已內建「輸出繁體中文」規則，無論來源語言為何，AI 產出的文件、回覆、代碼註解都會是繁體中文。
     </div>
+    <pre style="background: var(--code-bg); padding: 1rem; border-radius: var(--radius); overflow-x: auto; margin: 1rem 0;"><code># CLAUDE.md - 專案指令檔
+
+## 輸出語言
+所有回覆、文件、代碼註解、Commit 訊息<strong>統一使用繁體中文</strong>，無論輸入語言為何。
+
+## 專案架構
+- src/ - 主要源碼
+- tests/ - 測試檔案
+- docs/ - 文件
+
+## 開發規範
+- 命名：PascalCase (類別)、camelCase (函數/變數)、UPPER_SNAKE_CASE (常數)
+- Git: Conventional Commits (feat:/fix:/docs:/refactor:)
+- 測試: 新功能必須含單元測試，覆蓋率 ≥ 80%
+- Lint: 提交前需通過 ESLint + Prettier
+
+## 常用指令
+- dev: npm run dev
+- test: npm run test
+- lint: npm run lint
+- build: npm run build
+
+## 禁用事項
+- ❌ 硬編碼 API Key / Secret / Token
+- ❌ 直接修改 production 環境設定
+- ❌ 未經審查直接合併 main 分支
+
+## 參考文件
+- AGENTS.md (Codex 專用)
+- ARCHITECTURE.md (架構決策記錄)
+</code></pre>
   </section>
 
-  <!--  Section 6  -->
-  <section class="section" id="maintain">
+  <!-- Section 6 -->
+  <section class="section" id="faq">
     <div class="section-header">
       <span class="section-number">6</span>
-      <h2>維護 = 新增 + 修剪</h2>
+      <h2>常見問題</h2>
     </div>
-    <p><strong>新增：</strong>用 <code>/insights</code> 分析歷史對話，找出反覆發生的問題，只加真正能解決問題的規則——不要看到一個 case 就加一條。</p>
-    <p><strong>修剪兩個對象：</strong></p>
-    <div class="types">
-      <div class="type-card">
-        <div class="type-name">模型變強後不再需要的</div>
-        <div class="type-desc">Claude 官方曾為了新一代模型（如 Fable 5 / Opus 5）刪掉 80% 的規則，結果能力不減反而變強。</div>
+    <div class="questions">
+      <div class="question-item">
+        <div class="q-num">Q1</div>
+        <div class="q-body">
+          <div class="q-text">CLAUDE.md 改了但 AI 沒生效？</div>
+          <div class="q-hint">Claude Code 只在「新對話」讀取。已開啟的對話需重啟或用 <code class="inline">/init</code> 重新載入。</div>
+        </div>
       </div>
-      <div class="type-card">
-        <div class="type-name">跟真實情況不符的過時規則</div>
-        <div class="type-desc">對照最新的官方 Prompting Guide，判斷哪些已過時，該砍就砍。</div>
+      <div class="question-item">
+        <div class="q-num">Q2</div>
+        <div class="q-body">
+          <div class="q-text">想暫時覆蓋某條規則？</div>
+          <div class="q-hint">在 Local Level (<code class="inline">.claude/CLAUDE.local.md</code>) 寫相反規則，優先序最高，不會污染專案共識。</div>
+        </div>
       </div>
-    </div>
-    <div class="callout">
-      <div class="callout-title">🔁 把它當作活文件</div>
-      <p>CLAUDE.md 不是寫一次就好，而是隨著專案與模型演進持續修剪的高品質小文件。</p>
-    </div>
-  </section>
-
-  <!--  Section 7  -->
-  <section class="section" id="distribute">
-    <div class="section-header">
-      <span class="section-number">7</span>
-      <h2>內容分流：別全塞 CLAUDE.md</h2>
-    </div>
-    <p>不同性質的指令，適合放在不同地方。把長內容、死命令、跨工具同步分別處理。</p>
-    <div class="types">
-      <div class="type-card">
-        <div class="type-name">Skill（流程）</div>
-        <div class="type-tag">/skill-name</div>
-        <div class="type-desc">長流程（例如發布版本前十幾項檢查）放成 Skill，需要時再呼叫，不佔 context。</div>
-      </div>
-      <div class="type-card">
-        <div class="type-name">Hook（強制攔截）</div>
-        <div class="type-tag">hooks/*</div>
-        <div class="type-desc">絕對不能犯的死罪（例如 API key 不能進 git）用 Hook 程式強制檔住，不能只靠文字提醒。</div>
-      </div>
-      <div class="type-card">
-        <div class="type-name">AGENTS.md（同步）</div>
-        <div class="type-tag">AGENTS.md ↔ CLAUDE.md</div>
-        <div class="type-desc">Codex 用 AGENTS.md、Claude Code 用 CLAUDE.md。讓其中一份 reference 另一份，只維護 single source of truth。</div>
+      <div class="question-item">
+        <div class="q-num">Q3</div>
+        <div class="q-body">
+          <div class="q-text">團隊成員用 Codex (AGENTS.md) 怎麼同步？</div>
+          <div class="q-hint">內容保持同步，只是檔名不同。CI 可加入檢查兩檔一致性。</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!--  Closing  -->
-  <section class="closing">
-    <h3>一句話總結</h3>
-    <p>CLAUDE.md 寫得少、寫得準、寫得活的話，是 AI 時代投資報酬率最高的一件事——它讓每一次新對話，都自動帶著團隊累積下來的智慧。</p>
-  </section>
+  <!-- Closing -->
+  <div class="closing">
+    <h3>寫好 CLAUDE.md，是用 AI 最高報酬率的動作</h3>
+    <p>一次投入、永續回收。下次開新對話，你會發現 AI 已經「懂你的專案、守你的規矩、說你的語言」。</p>
+    <a href="https://youtu.be/wj7mHCviMvs" target="_blank" rel="noopener noreferrer" class="cta-btn">觀看原影片 →</a>
+  </div>
 
-  <!--  Source  -->
+  <!-- Source -->
   <div class="source">
     <p>內容整理自 YouTube 影片 ➜ <a href="https://youtu.be/wj7mHCviMvs" target="_blank" rel="noopener noreferrer">15 分鐘學完 CLAUDE.md：從入門到精通</a></p>
   </div>
 
-  <!--  Video Nav  -->
+  <!-- Video Nav -->
   <nav class="video-nav">
     <div class="video-nav-btn disabled" aria-disabled="true">
       <div class="nav-arrow">← 上一部</div>
@@ -863,43 +263,6 @@ code {
 
 <button class="back-to-top" id="back-to-top" aria-label="回到頂部">↑</button>
 
-<script>
-  //  Theme toggle
-  (function() {
-    const btn = document.getElementById('theme-toggle');
-    const root = document.documentElement;
-    function updateIcon() {
-      const t = root.getAttribute('data-theme');
-      btn.textContent = t === 'dark' ? '☀️' : '🌙';
-      btn.setAttribute('aria-label', t === 'dark' ? '切換淺色模式' : '切換深色模式');
-    }
-    updateIcon();
-    btn.addEventListener('click', function() {
-      const current = root.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      root.setAttribute('data-theme', next);
-      localStorage.setItem('ytkb-theme', next);
-      updateIcon();
-    });
-  })();
-
-  //  Back to top
-  (function() {
-    const btn = document.getElementById('back-to-top');
-    function check() {
-      if (window.scrollY > 400) {
-        btn.classList.add('visible');
-      } else {
-        btn.classList.remove('visible');
-      }
-    }
-    window.addEventListener('scroll', check, { passive: true });
-    check();
-    btn.addEventListener('click', function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  })();
-</script>
-
+<script src="../shared.js"></script>
 </body>
 </html>
