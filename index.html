@@ -1,388 +1,449 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="YT-KB：把喜歡的 YouTube 教學影片整理成好讀的網頁，給想認真看完一份精華的你。">
-<title>YT-KB · YouTube 知識庫</title>
-<style>
-  :root {
-    --bg: #F7F1E8;
-    --bg-card: #FFFEFB;
-    --primary: #B85C3E;
-    --primary-soft: #E8B7A2;
-    --primary-dark: #8E4530;
-    --accent: #3D5A4E;
-    --text: #2A2520;
-    --text-soft: #6B5D54;
-    --text-muted: #A6998B;
-    --border: #E5DACA;
-    --border-strong: #D4C5B0;
-    --shadow-sm: rgba(60, 40, 30, 0.06);
-    --shadow-md: rgba(60, 40, 30, 0.12);
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YT-KB · YouTube 知識庫</title>
+  <script>
+    // Anti-FOUC: 讀主題最優先，避免閃白
+    (function() {
+      try {
+        var stored = localStorage.getItem('ytkb-theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <style>
+    :root {
+      --bg:           #FBF6EC;
+      --bg-elevated:  #FFFCF6;
+      --surface:      #F2E9D7;
+      --border:       #E5D9C3;
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+      --text:         #2C2418;
+      --text-soft:    #6B5D49;
+      --text-muted:   #8E8068;
 
-  html {
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
+      --primary:      #B05139;
+      --primary-soft: #C97865;
+      --primary-bg:   #F4E3DA;
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
-    background: var(--bg);
-    background-image:
-      radial-gradient(circle at 15% 8%, rgba(232, 183, 162, 0.18), transparent 42%),
-      radial-gradient(circle at 88% 92%, rgba(61, 90, 78, 0.10), transparent 45%);
-    background-attachment: fixed;
-    color: var(--text);
-    line-height: 1.7;
-    min-height: 100vh;
-  }
+      --accent:       #4F7142;
+      --accent-soft:  #6B8C5C;
+      --accent-bg:    #E0E6D3;
 
-  .container {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 72px 28px 96px;
-  }
+      --shadow:        rgba(64, 41, 22, 0.08);
+      --shadow-strong: rgba(64, 41, 22, 0.16);
 
-  /* ============ Hero ============ */
-  .hero {
-    margin-bottom: 64px;
-    padding-bottom: 48px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 22px;
-  }
-
-  .brand-mark {
-    width: 52px;
-    height: 52px;
-    background: var(--primary);
-    border-radius: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 26px;
-    font-weight: 700;
-    transform: rotate(-4deg);
-    box-shadow: 0 6px 16px rgba(184, 92, 62, 0.32);
-    transition: transform .3s ease;
-  }
-  .brand:hover .brand-mark { transform: rotate(-2deg) scale(1.05); }
-
-  .brand-title {
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 52px;
-    font-weight: 700;
-    color: var(--primary);
-    letter-spacing: -1.5px;
-    line-height: 1;
-  }
-
-  .tagline {
-    font-size: 19px;
-    color: var(--text-soft);
-    max-width: 620px;
-    margin-bottom: 22px;
-    line-height: 1.85;
-  }
-
-  .stats {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    color: var(--accent);
-    background: rgba(61, 90, 78, 0.10);
-    padding: 8px 16px;
-    border-radius: 24px;
-    font-weight: 500;
-  }
-  .stats-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--accent);
-    border-radius: 50%;
-    box-shadow: 0 0 0 3px rgba(61, 90, 78, 0.25);
-  }
-
-  /* ============ Section ============ */
-  .section-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 2.5px;
-    margin-bottom: 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .section-title::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(to right, var(--border), transparent);
-  }
-
-  /* ============ Grid ============ */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    gap: 20px;
-  }
-
-  /* ============ Card ============ */
-  .card {
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 28px;
-    text-decoration: none;
-    color: inherit;
-    position: relative;
-    transition:
-      transform .28s cubic-bezier(.2, .7, .2, 1),
-      box-shadow .28s ease,
-      border-color .28s ease,
-      background .28s ease;
-  }
-  .card::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: var(--primary);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform .35s cubic-bezier(.2, .7, .2, 1);
-    border-radius: 18px 18px 0 0;
-  }
-  .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 18px 44px var(--shadow-md);
-    border-color: var(--primary-soft);
-    background: #fff;
-  }
-  .card:hover::before { transform: scaleX(1); }
-  .card:focus-visible {
-    outline: 3px solid var(--primary);
-    outline-offset: 3px;
-  }
-
-  .card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 18px;
-    gap: 12px;
-  }
-
-  .card-badge {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--accent);
-    background: rgba(61, 90, 78, 0.12);
-    padding: 5px 12px;
-    border-radius: 6px;
-    letter-spacing: 0.3px;
-  }
-
-  .card-index {
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 13px;
-    font-style: italic;
-    color: var(--text-muted);
-    letter-spacing: 0.5px;
-  }
-
-  .card-title {
-    font-size: 21px;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1.45;
-    margin-bottom: 12px;
-    letter-spacing: -0.2px;
-  }
-
-  .card-desc {
-    font-size: 15px;
-    color: var(--text-soft);
-    line-height: 1.75;
-    flex: 1;
-    margin-bottom: 22px;
-  }
-
-  .card-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--primary);
-    padding-top: 18px;
-    border-top: 1px dashed var(--border);
-  }
-  .card-cta-arrow {
-    display: inline-block;
-    transition: transform .28s cubic-bezier(.2, .7, .2, 1);
-  }
-  .card:hover .card-cta-arrow { transform: translateX(6px); }
-
-  /* ============ Footer ============ */
-  .footer {
-    margin-top: 80px;
-    padding-top: 32px;
-    border-top: 1px solid var(--border);
-    text-align: center;
-    font-size: 13px;
-    color: var(--text-muted);
-    letter-spacing: 0.3px;
-  }
-  .footer-line {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .footer-dot {
-    width: 4px;
-    height: 4px;
-    background: var(--text-muted);
-    border-radius: 50%;
-    opacity: 0.6;
-  }
-
-  /* ============ Mobile ============ */
-  @media (max-width: 640px) {
-    .container {
-      padding: 48px 20px 64px;
+      --nav-bg-rgb: 251, 246, 236;
     }
+
+    [data-theme="dark"] {
+      --bg:           #1B1813;
+      --bg-elevated:  #251F19;
+      --surface:      #2F2820;
+      --border:       #423A2F;
+
+      --text:         #ECE2D0;
+      --text-soft:    #B8A88F;
+      --text-muted:   #8C7E68;
+
+      --primary:      #D78264;
+      --primary-soft: #E29678;
+      --primary-bg:   #3A261E;
+
+      --accent:       #87A372;
+      --accent-soft:  #A3B98C;
+      --accent-bg:    #2C3823;
+
+      --shadow:        rgba(0, 0, 0, 0.30);
+      --shadow-strong: rgba(0, 0, 0, 0.50);
+
+      --nav-bg-rgb: 27, 24, 19;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+      transition: background-color .3s ease, color .3s ease;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection { background: var(--primary); color: #fff; }
+
+    /* ─────── Nav ─────── */
+    .nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(var(--nav-bg-rgb), 0.82);
+      backdrop-filter: saturate(180%) blur(14px);
+      -webkit-backdrop-filter: saturate(180%) blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      padding: 14px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .nav-brand {
+      font-family: Georgia, "Times New Roman", "PingFang TC", serif;
+      font-size: 1.32rem; font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 10px;
+    }
+    .nav-brand .dot {
+      width: 10px; height: 10px; border-radius: 2px;
+      background: var(--primary);
+      display: inline-block;
+      transform: rotate(45deg);
+    }
+    .nav-brand .sub {
+      color: var(--text-muted); font-weight: 400;
+      font-size: 0.82rem; font-family: inherit;
+      letter-spacing: 0.02em;
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-soft);
+      width: 38px; height: 38px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 1.05rem; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all .2s ease;
+    }
+    .theme-toggle:hover {
+      background: var(--surface);
+      color: var(--text);
+      transform: rotate(20deg);
+    }
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* ─────── Main ─────── */
+    main {
+      max-width: 1100px; margin: 0 auto;
+      padding: 64px 24px 80px;
+    }
+
+    /* ─────── Hero ─────── */
     .hero {
-      margin-bottom: 44px;
-      padding-bottom: 32px;
+      margin-bottom: 56px;
+      padding-bottom: 36px;
+      border-bottom: 1px dashed var(--border);
     }
-    .brand-title {
-      font-size: 38px;
-      letter-spacing: -0.8px;
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 18px;
+      padding: 5px 12px;
+      background: var(--accent-bg);
+      border-radius: 999px;
     }
-    .brand-mark {
-      width: 42px;
-      height: 42px;
-      font-size: 22px;
+    .hero h1 {
+      font-family: Georgia, "Times New Roman", "PingFang TC", serif;
+      font-size: clamp(2rem, 5.2vw, 3.3rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.18;
+      margin-bottom: 20px;
+      color: var(--text);
     }
-    .tagline {
-      font-size: 17px;
+    .hero h1 .accent {
+      color: var(--primary);
+      font-style: italic;
+      font-weight: 700;
     }
-    .grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--text-soft);
+      max-width: 640px;
+      line-height: 1.75;
+    }
+
+    /* ─────── Section ─────── */
+    .section-head {
+      display: flex; align-items: baseline; gap: 14px;
+      margin-bottom: 24px;
+    }
+    .section-head h2 {
+      font-family: Georgia, "Times New Roman", "PingFang TC", serif;
+      font-size: 1.45rem; font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+    .section-head .count {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      padding: 3px 10px;
+      background: var(--surface);
+      border-radius: 999px;
+    }
+
+    /* ─────── Cards ─────── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 22px;
     }
     .card {
-      padding: 24px;
+      display: block;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 26px 24px 24px;
+      text-decoration: none;
+      color: var(--text);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 1px 2px var(--shadow);
+      transition: transform .25s cubic-bezier(.2,.8,.2,1),
+                  box-shadow .25s cubic-bezier(.2,.8,.2,1),
+                  border-color .25s ease,
+                  background-color .3s ease;
     }
-    .card-title {
-      font-size: 19px;
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: linear-gradient(180deg, var(--primary) 0%, var(--accent) 100%);
+      opacity: 0;
+      transition: opacity .25s ease;
     }
-    .card-desc {
-      font-size: 14.5px;
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px var(--shadow-strong);
+      border-color: var(--primary-soft);
     }
-  }
+    .card:hover::before { opacity: 1; }
+    .card:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
 
-  @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; }
-    .card:hover, .brand-mark { transform: none !important; }
-  }
-</style>
+    .card-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      padding: 4px 10px;
+      background: var(--accent-bg);
+      border-radius: 4px;
+    }
+    .card h3 {
+      font-family: Georgia, "Times New Roman", "PingFang TC", serif;
+      font-size: 1.18rem; font-weight: 700;
+      line-height: 1.42;
+      margin-bottom: 12px;
+      color: var(--text);
+      letter-spacing: -0.005em;
+    }
+    .card p {
+      font-size: 0.93rem;
+      color: var(--text-soft);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+    .card-arrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.88rem;
+      color: var(--primary);
+      font-weight: 600;
+      transition: gap .2s ease, color .2s ease;
+    }
+    .card:hover .card-arrow { gap: 10px; }
+
+    /* ─────── Footer ─────── */
+    footer {
+      max-width: 1100px; margin: 0 auto;
+      padding: 32px 24px 40px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+    footer p + p { margin-top: 4px; opacity: 0.8; font-size: 0.78rem; }
+
+    /* ─────── Back to top ─────── */
+    .back-to-top {
+      position: fixed;
+      right: 28px; bottom: 28px;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 22px var(--shadow-strong);
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      transition: all .3s ease;
+      z-index: 90;
+      font-size: 1.15rem; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .back-to-top.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .back-to-top:hover {
+      background: var(--primary-soft);
+      transform: translateY(-2px);
+    }
+    .back-to-top:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* ─────── Mobile ─────── */
+    @media (max-width: 600px) {
+      .nav-inner { padding: 12px 18px; }
+      main { padding: 40px 18px 64px; }
+      .hero { margin-bottom: 40px; padding-bottom: 28px; }
+      .hero p { font-size: 0.98rem; }
+      .cards { grid-template-columns: 1fr; gap: 16px; }
+      .card { padding: 22px 20px 20px; }
+      .back-to-top { right: 18px; bottom: 18px; width: 40px; height: 40px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+      html { scroll-behavior: auto; }
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-
-    <header class="hero">
-      <a href="./" class="brand" aria-label="YT-KB 首頁">
-        <span class="brand-mark" aria-hidden="true">Y</span>
-        <span class="brand-title">YT-KB</span>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="./" aria-label="YT-KB 首頁">
+        <span class="dot" aria-hidden="true"></span>
+        YT-KB<span class="sub">· 知識庫</span>
       </a>
-      <p class="tagline">把喜歡的 YouTube 教學影片整理成好讀的網頁，給想認真看完一份精華的你。</p>
-      <div class="stats" role="status" aria-live="polite">
-        <span class="stats-dot" aria-hidden="true"></span>
-        <span>目前收錄 <strong>2</strong> 部影片</span>
-      </div>
-    </header>
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="切換深淺主題">
+        <span id="themeIcon">🌙</span>
+      </button>
+    </div>
+  </nav>
 
-    <main>
-      <h2 class="section-title">影片目錄</h2>
-      <div class="grid">
+  <main>
+    <section class="hero">
+      <span class="hero-eyebrow">Personal Reading Notes</span>
+      <h1>把喜歡的 YouTube 教學，<br>整理成<span class="accent">可以讀的筆記。</span></h1>
+      <p>精選值得一看再看的影片，摘錄重點、標記時序，變成一篇篇好讀的網頁。給自己留個索引，也分享給有緣的親友慢慢翻。</p>
+    </section>
 
-        <!-- ===== 卡片 1 ===== -->
-        <a class="card" href="videos/claude-md.html" aria-label="閱讀：15 分鐘學完 CLAUDE.md：從入門到精通">
-          <div class="card-top">
-            <span class="card-badge">AI · 開發工具</span>
-            <span class="card-index">No. 01</span>
-          </div>
-          <h3 class="card-title">15 分鐘學完 CLAUDE.md：從入門到精通</h3>
-          <p class="card-desc">Claude Code / Codex 的指令檔（CLAUDE.md / AGENTS.md）該寫什麼、怎麼維護，用 AI 投資報酬率最高的一課。</p>
-          <div class="card-cta">
-            <span>閱讀整理筆記</span>
-            <span class="card-cta-arrow" aria-hidden="true">→</span>
-          </div>
-        </a>
+    <div class="section-head">
+      <h2>收錄影片</h2>
+      <span class="count" id="cardCount">共 2 部</span>
+    </div>
 
-        <!-- ===== 卡片 2 ===== -->
-        <a class="card" href="videos/LCIPEQb1V0Q.html" aria-label="閱讀：Obsidian裝了卻不會用？我這樣用它做完一支影片｜實戰分享">
-          <div class="card-top">
-            <span class="card-badge">生產力 · 筆記工具</span>
-            <span class="card-index">No. 02</span>
-          </div>
-          <h3 class="card-title">Obsidian裝了卻不會用？我這樣用它做完一支影片｜實戰分享</h3>
-          <p class="card-desc">Obsidian 怎麼當第二大腦用——影片製作流程、origin 標籤分離原則、讀書筆記庫，一整套實戰方法。</p>
-          <div class="card-cta">
-            <span>閱讀整理筆記</span>
-            <span class="card-cta-arrow" aria-hidden="true">→</span>
-          </div>
-        </a>
+    <div class="cards" id="cards">
+      <!--
+        👇 加入新影片請複製下面這段 <a class="card">…</a>，改標題、簡介、連結、tag 即可
+      -->
+      <a class="card" href="videos/claude-md.html">
+        <span class="card-tag">AI 工作流</span>
+        <h3>15 分鐘學完 CLAUDE.md：從入門到精通</h3>
+        <p>Claude Code / Codex 的指令檔（CLAUDE.md / AGENTS.md）該寫什麼、怎麼維護，用 AI 投資報酬率最高的一課。</p>
+        <span class="card-arrow">閱讀筆記 →</span>
+      </a>
 
-        <!--
-          ===== 新增卡片：複製下方這段，整個貼到 .grid 裡面，並修改內容即可 =====
-        <a class="card" href="videos/你的檔名.html" aria-label="閱讀：你的標題">
-          <div class="card-top">
-            <span class="card-badge">分類標籤</span>
-            <span class="card-index">No. 03</span>
-          </div>
-          <h3 class="card-title">你的影片標題</h3>
-          <p class="card-desc">一句話簡介，告訴親友這部影片在講什麼、他為什麼要看這份整理。</p>
-          <div class="card-cta">
-            <span>閱讀整理筆記</span>
-            <span class="card-cta-arrow" aria-hidden="true">→</span>
-          </div>
-        </a>
-        -->
+      <a class="card" href="videos/LCIPEQb1V0Q.html">
+        <span class="card-tag">知識管理</span>
+        <h3>Obsidian 裝了卻不會用？我這樣用它做完一支影片｜實戰分享</h3>
+        <p>Obsidian 怎麼當第二大腦用——影片製作流程、origin 標籤分離原則、讀書筆記庫。</p>
+        <span class="card-arrow">閱讀筆記 →</span>
+      </a>
+    </div>
+  </main>
 
-      </div>
-    </main>
+  <footer>
+    <p>YT-KB · 個人整理，分享給親友</p>
+    <p>影片版權與內容歸原作者所有</p>
+  </footer>
 
-    <footer class="footer">
-      <span class="footer-line">
-        YT-KB
-        <span class="footer-dot" aria-hidden="true"></span>
-        個人知識庫
-        <span class="footer-dot" aria-hidden="true"></span>
-        持續更新中
-      </span>
-    </footer>
+  <button class="back-to-top" id="backToTop" type="button" aria-label="回到頂部">
+    ↑
+  </button>
 
-  </div>
+  <script>
+    /* ──── 主題切換 ──── */
+    (function () {
+      var btn   = document.getElementById('themeToggle');
+      var icon  = document.getElementById('themeIcon');
+      var root  = document.documentElement;
+
+      function paint() {
+        var t = root.getAttribute('data-theme');
+        icon.textContent = t === 'dark' ? '☀️' : '🌙';
+        btn.setAttribute('aria-label',
+          t === 'dark' ? '切換到淺色主題' : '切換到深色主題');
+      }
+      paint();
+
+      btn.addEventListener('click', function () {
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('ytkb-theme', next); } catch (e) {}
+        paint();
+      });
+    })();
+
+    /* ──── 自動計算卡片數量 ──── */
+    (function () {
+      var count = document.querySelectorAll('#cards .card').length;
+      var el    = document.getElementById('cardCount');
+      if (el) el.textContent = '共 ' + count + ' 部';
+    })();
+
+    /* ──── Back to top ──── */
+    (function () {
+      var btn = document.getElementById('backToTop');
+      var visible = false;
+      function onScroll() {
+        var shouldShow = window.scrollY > 400;
+        if (shouldShow !== visible) {
+          visible = shouldShow;
+          btn.classList.toggle('visible', visible);
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      btn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      onScroll();
+    })();
+  </script>
 </body>
 </html>
