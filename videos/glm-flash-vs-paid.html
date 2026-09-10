@@ -110,13 +110,16 @@
   <section class="section" id="tool-call">
     <div class="section-header">
       <span class="section-number">4</span>
-      <h2>Exactor：為「tool call 掉球」而生</h2>
+      <h2>Exacto：為「tool call 掉球」而生</h2>
     </div>
     <div class="section-lead">
-      Agent 幹活全靠 tool call——便宜的 host 如果在這一步掉球，省的錢都是白省。
+      Agent 幹活全靠 tool call——host 如果在這一步掉球，省的錢都是白省。
     </div>
     <p>Tool call = agent 請求「讀檔」或「跑指令」的那一刻。它在，chat box 才變成真正的工具。如果 host 在這步失誤，<strong>agent 整個停止</strong>。</p>
-    <p>因此 OpenRouter 替每家 host 公布兩個即時指標：<strong>Tool Call Error Rate</strong> 和 <strong>Cache Hit Rate</strong>，並為此做了 <strong>Exactor 路由模式</strong>——專門繞開那些會掉 tool call 的 host。</p>
+    <p>OpenRouter 對每筆 tool call 檢查三種失敗：<strong>InvalidJson</strong>（壞 JSON）、<strong>UnknownName</strong>（幻覺出不存在的工具）、<strong>SchemaMismatch</strong>（參數結構不對），並替每家 host 公布 <strong>Tool Call Error Rate</strong> 和 <strong>Cache Hit Rate</strong> 兩個即時指標。</p>
+    <p>因為「同一個模型、不同 host 品質差很多」，OpenRouter 做了 <strong>Exacto 路由</strong>（2025/10）：只路由到 tool-call 準確率頂級的 host。實測 Tau2-Bench / LiveMCPBench 提升 10–20%。</p>
+    <p>第二代 <strong>Auto Exacto</strong>（2026/3）：帶 tools 的請求<strong>預設自動啟用</strong>、每約 5 分鐘重評吞吐/遙測/benchmark 三訊號，把預設路由從「價格優先」改為「品質優先」。官方數據：GLM-5 的 error rate <strong>8% → 1%</strong>（-88%）、GLM-4.7 -80%。</p>
+    <p>给自己的提醒：我們走的是 opencode Go 池（不是 OpenRouter）——Go 池官方說明有先做基準測試篩選 host，相當於做了初步的 Exacto，但<strong>不公開 per-host 遙測</strong>，透明度較低。<code class="inline">x-opencode-session</code> header 就扮演了 Go 池版的 routing/cache key。</p>
   </section>
 
   <!-- Section 5 -->
