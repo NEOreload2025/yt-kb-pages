@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>便宜的開源模型 + 免費 harness，能取代付費 coding 工具嗎？ | YT-KB</title>
+<meta property="og:title" content="便宜的開源模型 + 免費 harness，能取代付費 coding 工具嗎？ | YT-KB">
+<meta property="og:description" content="GLM-5.3-Flash 的真實成本拆解：省 10 倍錢的代價是 15% 可用性。「便宜」是供應商的特質，不是模型的特質。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://neoreload2025.github.io/yt-kb-pages/videos/glm-flash-vs-paid.html">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="GLM-5.3-Flash 真實成本拆解：agent 帳單 38:1 集中在 input、cache hit 決定實付、可用性比智能更關鍵。省 10 倍錢換 15% 可用性的完整交易公式。">
+<script>
+  (function() {
+    var themeAttr = 'data-theme';
+    var storageKey = 'ytkb-theme';
+    var html = document.documentElement;
+    try {
+      var saved = localStorage.getItem(storageKey);
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = saved || (prefersDark ? 'dark' : 'light');
+      html.setAttribute(themeAttr, theme);
+    } catch (e) {
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      html.setAttribute(themeAttr, prefersDark ? 'dark' : 'light');
+    }
+  })();
+</script>
+<link rel="stylesheet" href="../shared.css">
+</head>
+<body>
+
+<nav class="nav" aria-label="主導航">
+  <div class="nav-inner">
+    <a href="../index.html" class="brand" aria-label="回到 YT-KB 首頁">
+      <span class="brand-dot"></span>YT-KB
+    </a>
+    <button class="theme-toggle" id="themeToggle" aria-label="切換深淺主題">
+      <span class="theme-icon" id="themeIcon">🌙</span>
+    </button>
+  </div>
+</nav>
+
+<main class="container">
+
+  <div class="video-thumb" aria-hidden="true">▶</div>
+  <div class="video-info">
+    <div class="source-tag">YouTube 影片摘要</div>
+    <div class="v-title">便宜開源模型 + 免費 harness，能取代付費 coding 工具嗎？</div>
+    <div class="v-meta">
+      影片 ID <span class="v-id">R8rFhhY222E</span> · 摘要整理日期 2026-09-10
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <span class="kicker">📌 影片摘要</span>
+    <h1>省 10 倍錢的代價<br>是 15% 可用性</h1>
+    <div class="one-liner">
+      免費的開源 harness 裝上便宜的開源模型（GLM-5.3-Flash），智能只輸旗艦 2 分，價格省近 20 倍——但真正的交易不是比智能，是比「可用性 vs 帳單」。
+    </div>
+  </section>
+
+  <!-- Section 1 -->
+  <section class="section" id="price-gap">
+    <div class="section-header">
+      <span class="section-number">1</span>
+      <h2>帳面上的價差：近 20 倍</h2>
+    </div>
+    <div class="section-lead">
+      同一家公司、同一系列的兩個版本，價格差近 20 倍——但智能分數只差 2 分。
+    </div>
+    <table>
+      <tr><th></th><th>GLM-5.3-Flash（輕量）</th><th>GLM-5.3（旗艦）</th></tr>
+      <tr><td>輸入</td><td>$0.075/M（促銷）→ $0.15/M</td><td>$1.40/M</td></tr>
+      <tr><td>輸出</td><td>$0.25/M（促銷）→ $0.42/M</td><td>$4.40/M</td></tr>
+      <tr><td>智能（agentic）</td><td>51.5（勝 90% 模型）</td><td>53.6</td></tr>
+    </table>
+    <p>影片統計當下（9/7–9/9）：Flash 正在 50% 促銷，9/9 到期回歸原價。即便漲價，跟旗艦仍然差 10–20 倍。而實測成績：純 coding 71.5%（勝 84% 模型）、agent 工作流 51.5（勝 90% 模型）——<strong>便宜的不等於弱的</strong>。</p>
+  </section>
+
+  <!-- Section 2 -->
+  <section class="section" id="input-heavy">
+    <div class="section-header">
+      <span class="section-number">2</span>
+      <h2>你的帳單其實是「輸入」在付錢</h2>
+    </div>
+    <div class="section-lead">
+      Agent 工作流的 input:output 比是 <strong>38:1</strong>——輸入價才是整張帳單，輸出價幾乎不動。
+    </div>
+    <p>OpenRouter 統計 10 天流量：GLM-5.3-Flash 收到 <strong>1.25T tokens</strong> 輸入，只吐回 <strong>32B tokens</strong>。原因：harness 每一步都在重讀你的檔案——掃一大段程式碼，只為了寫幾行新 code。</p>
+    <p>所以<strong>輸入單價才是你要盯的數字</strong>，而且只有輸入側能靠 cache 壓低：實測買家實付輸入均價 <strong>~$0.0325/M</strong>（快取命中率各家 27%–90% 不等）。快取命中 = host 記得你送過的檔案，重讀不收錢。</p>
+  </section>
+
+  <!-- Section 3 -->
+  <section class="section" id="host-matters">
+    <div class="section-header">
+      <span class="section-number">3</span>
+      <h2>「便宜」不是模型的特質，是供應商的</h2>
+    </div>
+    <div class="section-lead">
+      同一個模型在 OpenRouter 上有 23 家供應商——速度差 28 倍、價格也各不相同。
+    </div>
+    <p>最快的 host 寫出 <strong>168 tokens/s</strong>，最慢只有 <strong>6 tokens/s</strong>。同一顆模型，完全不同體驗。價格同樣如此：有 host 賣促銷價的 5 倍，也有 host 不用促銷就低於牌價。</p>
+    <p>結論：你實際買到的「便宜」，取決於<strong>當天跑它的 host</strong>，而不是模型本身。</p>
+  </section>
+
+  <!-- Section 4 -->
+  <section class="section" id="tool-call">
+    <div class="section-header">
+      <span class="section-number">4</span>
+      <h2>Exactor：為「tool call 掉球」而生</h2>
+    </div>
+    <div class="section-lead">
+      Agent 幹活全靠 tool call——便宜的 host 如果在這一步掉球，省的錢都是白省。
+    </div>
+    <p>Tool call = agent 請求「讀檔」或「跑指令」的那一刻。它在，chat box 才變成真正的工具。如果 host 在這步失誤，<strong>agent 整個停止</strong>。</p>
+    <p>因此 OpenRouter 替每家 host 公布兩個即時指標：<strong>Tool Call Error Rate</strong> 和 <strong>Cache Hit Rate</strong>，並為此做了 <strong>Exactor 路由模式</strong>——專門繞開那些會掉 tool call 的 host。</p>
+  </section>
+
+  <!-- Section 5 -->
+  <section class="section" id="harness-risk">
+    <div class="section-header">
+      <span class="section-number">5</span>
+      <h2>免費 harness 的真實風險</h2>
+    </div>
+    <div class="section-lead">
+      DeepSeek Harness 是 v0.1.3 alpha，作者全大寫警告 breaking changes。
+    </div>
+    <ul>
+      <li>版本 <strong>v0.1.3 alpha.1</strong>（pre-release，總共才 11 個 tag），首頁全大寫警告會有 breaking changes</li>
+      <li>內建 model picker <strong>凍結在編譯時</strong>：列表 333 個，市場實際 431 個——社群插件 <strong>flykit</strong> 改成啟動時拉 live list 就解決了</li>
+      <li>上架 3 週已有 <strong>~14,000 個插件 repo</strong>——「無特權核心」架構，模型適配器、工具列表、甚至 agent loop 都能換</li>
+      <li>插件換不掉的：底層 harness 的 breaking changes——你的自訂 loop 會跟著一起壞</li>
+    </ul>
+  </section>
+
+  <!-- Section 6 -->
+  <section class="section" id="from-paid">
+    <div class="section-header">
+      <span class="section-number">6</span>
+      <h2>彩蛋：Claude Code 自己也在偷用</h2>
+    </div>
+    <div class="section-lead">
+      OpenRouter 用量榜第二大買家，就是 Claude Code——2.5T tokens。
+    </div>
+    <p>社群有人寫插件把<strong>付費的 Claude Code 訂閱 + 免費 harness 對接</strong>——登入憑證寫進同一份 credential 檔。意思很清楚：<strong>工具跟模型，不必來自同一家公司</strong>。付費訂閱買的安心感，跟省錢的模型，可以拆開買。</p>
+  </section>
+
+  <!-- Section 7 -->
+  <section class="section" id="verdict">
+    <div class="section-header">
+      <span class="section-number">7</span>
+      <h2>結論：一筆交易公式</h2>
+    </div>
+    <div class="section-lead">
+      放棄約 15% 可用性，換約 10 倍省錢。適不適用看你的工作模式。
+    </div>
+    <table>
+      <tr><th>場景</th><th>用便宜方案？</th><th>原因</th></tr>
+      <tr><td>背景任務（過夜跑）</td><td>✅ 適合</td><td>掉球重試即可，省的錢是真的</td></tr>
+      <tr><td>deadline 現場工作</td><td>❌ 不適合</td><td>重試的時間成本 &gt; 省的錢</td></tr>
+    </table>
+    <p>便宜模型的真實短板不是智商（只差 2 分），而是<strong>可用性</strong>：單一 host 上 84.5% vs 旗艦 97%——每 100 個請求多掉 15 個。付費方案買的其實是「不掉球」的保證。</p>
+  </section>
+
+  <!-- Section 8 -->
+  <section class="section" id="takeaway">
+    <div class="section-header">
+      <span class="section-number">8</span>
+      <h2>給自己的三條啟示</h2>
+    </div>
+    <ol>
+      <li><strong>成本看輸入側</strong>：agent 帳單 38:1 壓在 input，快取命中率決定實付（~$0.0325/M vs 牌價 $0.15）。</li>
+      <li><strong>供應商 &gt; 模型</strong>：同一模型 23 家 host，速度差 28 倍、「便宜」歸 host；tool call error rate 才是掉球元兇。</li>
+      <li><strong>架構比訂閱重要</strong>：「工具 vs 模型」解耦已經發生——真正該問的是「我的 host 可靠嗎」，不是「我的工具有多貴」。</li>
+    </ol>
+  </section>
+
+</main>
+
+<button class="back-to-top" id="back-to-top" aria-label="回到頂部">↑</button>
+
+<script src="../shared.js"></script>
+</body>
+</html>
