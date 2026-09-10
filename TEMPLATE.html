@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>【影片標題】 | YT-KB</title>
+<meta property="og:title" content="【影片標題】 | YT-KB">
+<meta property="og:description" content="【一句話摘要】">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://neoreload2025.github.io/yt-kb-pages/videos/【video-id】.html">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="【一句話摘要】">
+<script>
+  (function() {
+    var themeAttr = 'data-theme';
+    var storageKey = 'ytkb-theme';
+    var html = document.documentElement;
+    try {
+      var saved = localStorage.getItem(storageKey);
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = saved || (prefersDark ? 'dark' : 'light');
+      html.setAttribute(themeAttr, theme);
+    } catch (e) {
+      var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      html.setAttribute(themeAttr, prefersDark ? 'dark' : 'light');
+    }
+  })();
+</script>
+<link rel="stylesheet" href="../shared.css">
+</head>
+<body>
+
+<nav class="nav" aria-label="主導航">
+  <div class="nav-inner">
+    <a href="../index.html" class="brand" aria-label="回到 YT-KB 首頁">
+      <span class="brand-dot"></span>YT-KB
+    </a>
+    <button class="theme-toggle" id="themeToggle" aria-label="切換深淺主題">
+      <span class="theme-icon" id="themeIcon">🌙</span>
+    </button>
+  </div>
+</nav>
+
+<main class="container">
+    <!-- ══════ 內文區：以下放筆記內容 ══════ -->
+    <h1>【影片標題】</h1>
+    <p class="meta">來源：YouTube（<a href="https://youtu.be/【video-id】">【video-id】</a>）</p>
+
+    <section>
+      <h2>【章節標題】</h2>
+      <p>【筆記內容】</p>
+    </section>
+    </main>
+
+<button class="back-to-top" id="back-to-top" aria-label="回到頂部">↑</button>
+
+<script src="../shared.js"></script>
+</body>
+</html>
