@@ -2,7 +2,9 @@
 
 YT-KB · YouTube 知識庫 — 把值得一看再看的 YouTube 教學，整理成好讀的網頁筆記。
 
-線上版：https://neoreload2025.github.io/yt-kb-pages/
+線上版：https://yt-kb-pages.pages.dev/
+
+GitHub Pages（尚未關閉）：https://neoreload2025.github.io/yt-kb-pages/
 
 ## 收錄頁面
 
@@ -25,7 +27,7 @@ YT-KB · YouTube 知識庫 — 把值得一看再看的 YouTube 教學，整理�
    - og 區塊的 `og:title` / `og:description` / `og:url`
    - `<main>` 內文
 3. 到 `index.html` 的卡片區加一張卡片（標題、簡介、連結、tag）
-4. push 後 GitHub Pages 自動部署
+4. 用草稿 PR 更新內容（不要直接 push 到 main）。Cloudflare Pages 目前是 Direct Upload，合併 PR 不會自動部署。GitHub Pages 若仍開啟，合併後才會跟著 main 更新
 
 ## 技術
 
